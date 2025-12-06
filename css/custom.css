@@ -1,0 +1,76 @@
+/* Custom rounded corners for the navbar */
+.nav-link {
+    border-radius: 0.375rem;
+}
+
+/* Default (light theme) active navbar link */
+[data-bs-theme="light"] .navbar-nav .nav-link.active {
+    background-color: #adb5bd; 
+}
+
+/* When the dark theme is active, change the background of the active link */
+[data-bs-theme="dark"] .navbar-nav .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1); 
+}
+
+/* Custom CSS to change the font of the brand text */
+.brand-text {
+    font-family: georgia, serifsans-serif;
+    font-size: 1.3rem;
+}
+
+/* Custom CSS for buttons - Light Theme */
+[data-bs-theme="light"] .btn-secondary {
+    --bs-btn-color: #000000;
+    --bs-btn-bg: #ffffff;
+    --bs-btn-border-color: #6c757d;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #6c757d;
+    --bs-btn-hover-border-color: #6c757d;
+}
+
+[data-bs-theme="dark"] .btn-secondary {
+    --bs-btn-border-color: #000000;
+}
+
+/* Custom CSS for page link - Light Theme */
+[data-bs-theme="light"] .page-link.active, .active > .page-link {
+    color: #000000;
+    background-color: #adb5bd;
+    border-color: #000000;
+}
+[data-bs-theme="light"] .page-link {
+    color: #000000;
+}
+
+/* Custom CSS for page link - Dark Theme */
+[data-bs-theme="dark"] .page-link.active, .active > .page-link {
+    background-color: #adb5bd3b;
+    border-color: #adb5bd;
+}
+[data-bs-theme="dark"] .page-link {
+    color: #ffffff;
+}
+
+/* Custom CSS for scrollbar - Default */
+::-webkit-scrollbar-thumb {
+  background-color: #adb5bd; 
+}
+::-webkit-scrollbar-track {
+  background-color: #00000014
+}
+::-webkit-scrollbar {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer; /* Change the cursor to pointer when hovering over the thumb */
+}
+
+/* Custom CSS for scrollbar - Dark Theme */
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+  background-color: #5f5f5f;
+}

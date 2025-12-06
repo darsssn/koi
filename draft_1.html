@@ -29,6 +29,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
     <link rel="stylesheet" href="css/adminlte.css"/>
     <!--end::Required Plugin(AdminLTE)-->
+    <!-- Link to Custom CSS -->
+    <link href="css/custom.css" rel="stylesheet">
+    <!-- Link to Custom CSS -->
   </head>
   <!--end::Head-->
 
@@ -123,7 +126,7 @@
         <div class="sidebar-brand">
           <a href="index.html" class="brand-link">
             <img src="assets/img/Koi_logo.png" class="brand-image opacity-75 shadow"/>
-            <span class="brand-text fw-light">Koi</span>
+            <span class="brand-text fw-light">KOI</span>
           </a>
         </div>
         <!--end::Sidebar Brand-->
@@ -188,6 +191,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Draft</label>
                       <div class="btn-group mb-2" role="group">
+                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
                         <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
                         <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
@@ -252,12 +256,8 @@
         document.getElementById('copyBtn').addEventListener('click', function() {
           textbox.select();  // Select the contents of the textarea
           document.execCommand('copy');  // Execute the copy command to copy the selected text
-          // Dynamically set the message for the toast
-          const toastMessage = document.getElementById('toastMessage');
-          toastMessage.textContent = "Text copied to clipboard!";  // Default message
-          // Display Toast notification
-          const toastEl = new bootstrap.Toast(document.getElementById('toastCopy'));
-          toastEl.show();  // Show the toast
+          // js/toast.js
+          showToast("Text copied to clipboard!");
           textbox.blur();  // This will unselect the text by removing focus from the textarea
         });
       };
@@ -266,6 +266,20 @@
       function updateCharCount(text) {
         document.getElementById('charCount').textContent = "Char count: " + text.length;
       }
+
+      // Function to toggle word wrap
+      function toggleWordWrap() {
+        const textarea = document.getElementById("inputText");
+      
+        // Check current wrap state and toggle
+        if (textarea.style.whiteSpace === "nowrap") {
+          textarea.style.whiteSpace = "normal";  // Turn on word wrap
+          textarea.setAttribute("wrap", "soft"); // Soft wrap
+        } else {
+          textarea.style.whiteSpace = "nowrap"; // Turn off word wrap
+          textarea.setAttribute("wrap", "off");  // Disable wrap
+        }
+      }      
     </script>
 
     <!--begin::Third Party Plugins-->
@@ -280,16 +294,7 @@
   <!--end::Body-->
 
   <!-- Toast Notification -->
-  <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="toastCopy" class="toast toast-light border border-dark" role="alert" aria-live="assertive" aria-atomic="true" >
-      <div class="toast-header">
-        <i class="bi bi-circle me-2"></i>
-        <strong class="me-auto">Koi</strong> <small>just now</small>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-      <div class="toast-body bg-light text-dark" id="toastMessage">...</div>
-    </div>
-  </div>
+  <script src="js/toast.js"></script>
   <!-- Toast Notification -->
   
 </html>

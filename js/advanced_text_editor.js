@@ -94,13 +94,9 @@ function inputFieldnames() {
 
     // VALIDATION: data must be divisible by number of headers
     if (dataLines.length % headers.length !== 0) {
-        // Dynamically set the message for the toast
-        const toastMessage = document.getElementById('toastMessage');
-        toastMessage.textContent = "ERROR: The number of input data lines (" + dataLines.length + 
-            ") is NOT divisible by the number of field names (" + headers.length + ").";
-        // Display Toast notification
-        const toastEl = new bootstrap.Toast(document.getElementById('toastCopy'));
-        toastEl.show();  // Show the toast
+        // js/toast.js
+        showToast("ERROR: The number of input data lines (" + dataLines.length + 
+            ") is NOT divisible by the number of field names (" + headers.length + ").");
         return;
     }
 
@@ -117,6 +113,7 @@ function inputFieldnames() {
     }
 
     document.getElementById("modalData-outputText").value = output;
+    document.getElementById("modalInputData-previousFieldnames").value = headers.join(", ");
     saveOutputTextToCache();
 
     // Close and clear modal inputs
@@ -134,29 +131,36 @@ function copyModalOutputText() {
     const outputTextbox = document.getElementById('modalData-outputText');
     outputTextbox.select();  // Select the contents of the textarea
     document.execCommand('copy');  // Execute the copy command to copy the selected text
-    // Dynamically set the message for the toast
-    const toastMessage = document.getElementById('toastMessage');
-    toastMessage.textContent = "Text copied to clipboard!";  // Default message
-    // Display Toast notification
-    const toastEl = new bootstrap.Toast(document.getElementById('toastCopy'));
-    toastEl.show();  // Show the toast
+    // js/toast.js
+    showToast("Text copied to clipboard!");
     outputTextbox.blur();  // This will unselect the text by removing focus from the textarea
 }
 
 // Function to save output text to local storage
 function saveOutputTextToCache() {
     const outputText = document.getElementById('modalData-outputText').value;
+    const previousFieldnames = document.getElementById('modalInputData-previousFieldnames').value;
     if (outputText) {
         localStorage.setItem('koi_textEditor_outputText', outputText);
         console.log('Output text saved to localStorage.');
     } else {
         console.log('No output text to save.');
     }
+    if (previousFieldnames) {
+        localStorage.setItem('koi_textEditor_previousFieldnames', previousFieldnames);
+        console.log('Previous fieldnames saved to localStorage.');
+    } else {
+        console.log('No previous fieldnames to save.');
+    }
 }
 
 function loadOutputTextFromCache() {
     const savedOutputText = localStorage.getItem('koi_textEditor_outputText');
+    const savedPreviousFieldnames = localStorage.getItem('koi_textEditor_previousFieldnames');
     
+    if (savedPreviousFieldnames !== null) {
+        document.getElementById('modalInputData-previousFieldnames').value = savedPreviousFieldnames;
+    }
     if (savedOutputText !== null) {
         document.getElementById('modalData-outputText').value = savedOutputText;
     }

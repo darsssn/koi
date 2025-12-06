@@ -80,3 +80,17 @@ function removeDuplicateLines() {
   inputData.value = unique.join('\n');
   inputData.dispatchEvent(new Event('input')); // Trigger input event so persistence works
 }
+
+function removeEmptyLines() {
+  const inputData = document.getElementById("inputText");
+  const lines = inputData.value.split('\n'); // Split the text into an array of lines
+
+  // Filter out lines that are empty or contain only whitespace
+  const nonEmptyLines = lines.filter(line => line.trim() !== '');
+
+  // Join the filtered lines back into a string with line breaks
+  inputData.value = nonEmptyLines.join('\n');
+
+  // Trigger input event to ensure persistence
+  inputData.dispatchEvent(new Event('input')); 
+}

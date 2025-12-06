@@ -29,6 +29,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
     <link rel="stylesheet" href="css/adminlte.css"/>
     <!--end::Required Plugin(AdminLTE)-->
+    <!-- Link to Custom CSS -->
+    <link href="css/custom.css" rel="stylesheet">
+    <!-- Link to Custom CSS -->
   </head>
   <!--end::Head-->
 
@@ -118,7 +121,7 @@
         <div class="sidebar-brand">
           <a href="index.html" class="brand-link">
             <img src="assets/img/Koi_logo.png" class="brand-image opacity-75 shadow"/>
-            <span class="brand-text fw-light">Koi</span>
+            <span class="brand-text fw-light">KOI</span>
           </a>
         </div>
         <!--end::Sidebar Brand-->
@@ -321,10 +324,7 @@
           const textbox = document.getElementById('outputText');
           navigator.clipboard.writeText(textbox.value)  // Modern Clipboard API
               .then(function() {
-                  const toastMessage = document.getElementById('toastMessage');
-                  toastMessage.textContent = "Text copied to clipboard!";
-                  const toastEl = new bootstrap.Toast(document.getElementById('toastCopy'));
-                  toastEl.show();  // Show the toast
+                  showToast("Text copied to clipboard!"); // js/toast.js
               })
               .catch(function(err) {
                   console.error('Error copying text: ', err);
@@ -382,16 +382,7 @@
   <!--end::Body-->
 
   <!-- Toast Notification -->
-  <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="toastCopy" class="toast toast-light border border-dark" role="alert" aria-live="assertive" aria-atomic="true" >
-      <div class="toast-header">
-        <i class="bi bi-circle me-2"></i>
-        <strong class="me-auto">Koi</strong> <small>just now</small>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-      <div class="toast-body bg-light text-dark" id="toastMessage">...</div>
-    </div>
-  </div>
+  <script src="js/toast.js"></script>
   <!-- Toast Notification -->
 
 </html>
