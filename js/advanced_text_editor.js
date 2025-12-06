@@ -1,6 +1,9 @@
 function logNumbers() {
     const keyword = document.getElementById('modalInputData-logNumbers').value.trim();
-    if (keyword === null) return;
+    
+    if (keyword.length === 0) {
+        return;
+    }
 
     // Get input and remove empty lines
     const inputData = document.getElementById("inputText").value;
@@ -49,6 +52,23 @@ function logNumbers() {
 
     //localStorage.setItem('koi_textEditor_outputText', output); // Save output to localStorage
     //console.log(localStorage.getItem('koi_textEditor_outputText'));
+}
+
+function extractFirstKeyword() {
+    // Get the value from the input textarea
+    const input = document.getElementById('inputText').value;
+    
+    // Use regex to find the first keyword including the colon
+    const regex = /^([^:]+:)/;
+    const match = input.split('\n')[0].match(regex);
+    
+    if (match) {
+        // If a match is found, set the value of outputText to that keyword with the colon
+        document.getElementById('modalInputData-logNumbers').value = match[0];
+    } else {
+        // If no match, show a message
+        // toast notifs here...
+    }
 }
 
 function inputFieldnames() {
