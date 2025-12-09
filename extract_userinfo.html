@@ -249,11 +249,19 @@
           if (line === "Display name") result["Display name"] = next;
           if (line === "User principal name") result["User principal name"] = next;
           if (line === "Object ID") result["Object ID"] = next;
-          if (line === "Created date time") result["Created date time"] = next;
+          if (line === "Created date time") {
+            result["Created date time"] = (next === "Assigned licenses") ? "N/A" : next;
+          }
           if (line === "Last password change date time") result["Last password change date time"] = next;
-          if (line === "Job title") result["Job title"] = next;
-          if (line === "Department") result["Department"] = next;
-          if (line === "Employee ID") result["Employee ID"] = next;
+          if (line === "Job title") {
+            result["Job title"] = (next === "Company name") ? "N/A" : next;
+          }
+          if (line === "Department") {
+            result["Department"] = (next === "Employee ID") ? "N/A" : next;
+          }
+          if (line === "Employee ID") {
+            result["Employee ID"] = (next === "Employee type") ? "N/A" : next;
+          }
       
           // Sign-ins block
           if (line === "Sign-ins") {
@@ -261,7 +269,7 @@
             while (j < lines.length) {
               if (lines[j].startsWith("Last interactive sign-in"))
                 result["Last interactive sign-in"] = lines[j].replace("Last interactive sign-in:", "").trim();
-              else if (lines[j].startsWith("Last non-interactive sign-in"))
+              else if (lines[j].startsWith("Public:"))
                 result["Last non-interactive sign-in"] = lines[j].replace("Last non-interactive sign-in:", "").trim();
               else if (!lines[j].includes(":"))
                 break; // Stop when structure ends
@@ -370,5 +378,3 @@
   <!-- Toast Notification -->
 
 </html>
-
-
