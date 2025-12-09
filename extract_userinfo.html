@@ -269,7 +269,7 @@
             while (j < lines.length) {
               if (lines[j].startsWith("Last interactive sign-in"))
                 result["Last interactive sign-in"] = lines[j].replace("Last interactive sign-in:", "").trim();
-              else if (lines[j].startsWith("Public:"))
+              else if (lines[j].startsWith("Last non-interactive sign-in"))
                 result["Last non-interactive sign-in"] = lines[j].replace("Last non-interactive sign-in:", "").trim();
               else if (!lines[j].includes(":"))
                 break; // Stop when structure ends
@@ -378,3 +378,4 @@
   <!-- Toast Notification -->
 
 </html>
+
