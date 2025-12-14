@@ -3,7 +3,7 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Extractor</title>
+    <title>Draft</title>
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
@@ -51,10 +51,10 @@
               </a>
             </li>
             <li class="nav-item d-none d-md-block"><a href="draft_1.html" class="nav-link">Draft</a></li>
-            <li class="nav-item d-none d-md-block"><a href="kql.html" class="nav-link">KQL<span class="navbar-badge badge text-bg-info">?</span></a></li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link active">KQL<span class="navbar-badge badge text-bg-info">?</span></a></li>
             <li class="nav-item d-none d-md-block"><a href="merger.html" class="nav-link">Merge</a></li>
             <li class="nav-item d-none d-md-block"><a href="sanitizer.html" class="nav-link">Sanitize</a></li>
-            <li class="nav-item d-none d-md-block"><a href="extractor.html" class="nav-link active">Extract</a></li>
+            <li class="nav-item d-none d-md-block"><a href="extractor.html" class="nav-link">Extract</a></li>
             <li class="nav-item d-none d-md-block"><a href="splunk_parser.html" class="nav-link">Splunk Parser</a></li>
             <li class="nav-item d-none d-md-block"><a href="text_editor.html" class="nav-link">Text Editor</a></li>
           </ul>
@@ -178,9 +178,165 @@
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
-            <div class="row g-3">
+            <div class="row g-2">
               <!--begin::Col-->
-              <div class="col-md-12">
+              <div class="col-md-6">
+                <!--begin::Input Group-->
+                <div class="card card-secondary card-outline mb-1">
+                  <!--begin::Header-->
+                    <!--put header here if needed---------------------------------------------------->
+                  <!--end::Header-->
+                  <!--begin::Body-->
+                  <div class="card-body d-flex flex-column" style="height: 90vh;"> <!-- Adjust based on viewport height -->
+                    <div class="d-flex justify-content-between align-items-center mb-1 mt-2">
+                      <label class="form-label">Builder</label>
+                    </div>
+                    <div class="accordion" id="accordionKQL">
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSignIn">Sign-in Events</button>
+                        </h2>
+                        <div id="collapseSignIn" class="accordion-collapse collapse show" data-bs-parent="#accordionKQL">
+                          <div class="accordion-body">
+                            <div class="row mb-2">
+                              <label class="col-sm-2 col-form-label">Email</label>
+                              <div class="col-sm-10">
+                                <input type="text" oninput="signinsKQL()" class="form-control" id="signin_email" placeholder="email@domain.com" />
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <label class="col-sm-2 col-form-label">IP Addresses</label>
+                              <div class="col-sm-10">
+                                <input type="text" oninput="signinsKQL()" class="form-control" id="IP_address" placeholder="x.x.x.x, y.y.y.y, z.z.z.z" />
+                              </div>
+                            </div>
+                            <hr>
+                            <div class="row mb-2">
+                              <label class="col-sm-4 col-form-label"># of days</label>
+                              <div class="col-sm-8">
+                                <input type="text" oninput="signinsKQL()" class="form-control" id="numOfDays" placeholder="x" />
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <label class="col-sm-4 col-form-label">AuthenticationRequirement</label>
+                              <div class="col-sm-8">
+                                <select class="form-select" id="authReq" onchange="signinsKQL()">
+                                  <option>-</option>
+                                  <option>multiFactor</option>
+                                  <option>singleFactor</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <label class="col-sm-4 col-form-label">Type</label>
+                              <div class="col-sm-8">
+                                <select class="form-select" id="signinType" onchange="signinsKQL()">
+                                  <option>-</option>
+                                  <option>AADNonInteractiveUserSignInLogs</option>
+                                  <option>SigninLogs</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <label class="col-sm-4 col-form-label">ConditionalAccessStatus</label>
+                              <div class="col-sm-8">
+                                <select class="form-select" id="conditionalAccessStatus" onchange="signinsKQL()">
+                                  <option>-</option>
+                                  <option>success</option>
+                                  <option>failure</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <label class="col-sm-4 col-form-label">AppDisplayName</label>
+                              <div class="col-sm-8">
+                                <input type="text" oninput="signinsKQL()" class="form-control" id="appDisplayName" placeholder="" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAudit">Audit Events</button>
+                        </h2>
+                        <div id="collapseAudit" class="accordion-collapse collapse" data-bs-parent="#accordionKQL">
+                          <div class="accordion-body">
+                            <div class="row mb-2">
+                              <label class="col-sm-2 col-form-label">Email</label>
+                              <div class="col-sm-10">
+                                <input type="text" oninput="auditKQL()" class="form-control" id="audit_email" placeholder="email@domain.com" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIPEvents">IP Events</button>
+                        </h2>
+                        <div id="collapseIPEvents" class="accordion-collapse collapse" data-bs-parent="#accordionKQL">
+                          <div class="accordion-body">
+                            <div class="row mb-2">
+                              <label class="col-sm-2 col-form-label">IP Addresses</label>
+                              <div class="col-sm-10">
+                                <input type="text" oninput="ipEventsKQL()" class="form-control" id="ipEvent_IP_addresses" placeholder="x.x.x.x, y.y.y.y, z.z.z.z" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseURLEvents">URL Events</button>
+                        </h2>
+                        <div id="collapseURLEvents" class="accordion-collapse collapse" data-bs-parent="#accordionKQL">
+                          <div class="accordion-body">
+                            <div class="row mb-2">
+                              <label class="col-sm-2 col-form-label">URL / Domain</label>
+                              <div class="col-sm-10">
+                                <input type="text" oninput="urlEventsKQL()" class="form-control" id="urlEvents_URL" placeholder="domain1.com, domain2.com, ..." />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmailEvents">Email Events</button>
+                        </h2>
+                        <div id="collapseEmailEvents" class="accordion-collapse collapse" data-bs-parent="#accordionKQL">
+                          <div class="accordion-body">
+                            <div class="row mb-2">
+                              <label class="col-sm-2 col-form-label">Sender</label>
+                              <div class="col-sm-10">
+                                <input type="text" oninput="emailEventsKQL()" class="form-control" id="emailEvents_senderEmail" placeholder="email@domain.com" />
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <label class="col-sm-2 col-form-label">Recipient</label>
+                              <div class="col-sm-10">
+                                <input type="text" oninput="emailEventsKQL()" class="form-control" id="emailEvents_recipientEmail" placeholder="email@domain.com" />
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <label class="col-sm-2 col-form-label">Subject</label>
+                              <div class="col-sm-10">
+                                <input type="text" oninput="emailEventsKQL()" class="form-control" id="emailEvents_subject" placeholder="" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--end::Body-->
+                </div>
+                <!--end::Input Group-->
+              </div>
+              <!--end::Col-->
+              <!--begin::Col-->
+              <div class="col-md-6">
                 <!--begin::Input Group-->
                 <div class="card card-secondary card-outline mb-1">
                   <!--begin::Header-->
@@ -189,20 +345,14 @@
                   <!--begin::Body-->
                   <div class="card-body d-flex flex-column" style="height: 90vh;"> <!-- Adjust based on viewport height -->
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="form-label">Input / Output</label>
+                      <label class="form-label">Query</label>
                       <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-extractor" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Extract Keywords</button>
                         <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
                         <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
                     </div>
-                    <div class="input-group flex-grow-1">
-                      <textarea id="inputText" oninput="extractLines()" class="form-control" aria-label="With textarea" placeholder="Input here..."></textarea>
-                      <textarea readonly id="outputText" class="form-control" aria-label="With textarea" placeholder="Output..."></textarea>
-                    </div>
-                    <div class="input-group">
-                      <span class="input-group-text">Keywords to Extract (comma-separated):</span>
-                      <textarea id="keywords" oninput="extractLines()" class="form-control" aria-label="With textarea" style="height: 60px;" placeholder="keyword1, keyword2, ..."></textarea>
+                    <div class="input-group mb-2 flex-grow-1">
+                      <textarea id="outputText" class="form-control" aria-label="With textarea"></textarea>
                     </div>
                   </div>
                   <!--end::Body-->
@@ -220,84 +370,19 @@
       <!--end::App Main-->
     </div>
     <!--end::App Wrapper-->
-    <!--Main Function-->
-    <script>
-      // Hardcoded keywords (converted to lowercase for consistency)
-      const hardcodedKeywords = ["xyzxyzxyz", "abcabcabc"];
-      const hardcodedKeywords2 = ["123123123", "45645645"];
-      
-      function extractLines() {
-          const inputText = document.getElementById('inputText').value.trim();
-          const userKeywords = document.getElementById('keywords').value
-              .split(',')
-              .map(k => k.trim().toLowerCase())
-              .filter(k => k.length > 0);
-      
-          // Merge user-input keywords with hardcoded ones
-          const keywords = [...new Set([...userKeywords, ...hardcodedKeywords, ...hardcodedKeywords2])];
-      
-          // Extract lines matching any keyword (ignoring case)
-          const matchingLines = inputText
-              .split('\n')
-              .filter(line =>
-                  keywords.some(keyword => line.toLowerCase().includes(keyword))
-              );
-      
-          document.getElementById('outputText').value = matchingLines.join('\n');
-          document.getElementById('message').textContent = matchingLines.length
-              ? `${matchingLines.length} matching lines found.`
-              : 'No matching lines found.';
-      }
-      
-      // Modal-based Extract Keywords
-      function extractKeywordsFromPopup() {
-          const inputData = document.getElementById('modalInputData').value.trim();
-      
-          if (!inputData) {
-              return;
-          }
-      
-          // Extract only the first word before ":" per line
-          const regex = /^(\S+):/gm;
-          const matches = [...inputData.matchAll(regex)].map(match => match[1] + ":");
-      
-          if (matches.length === 0) {
-              showToast("Extract Keywords - No valid keywords found."); // js/toast.js
-          }
-      
-          // Get existing keywords, add new ones, ensure no duplicates
-          const currentKeywords = document.getElementById('keywords').value
-              .split(',')
-              .map(k => k.trim())
-              .filter(k => k.length > 0);
-      
-          const combinedKeywords = [...new Set([...currentKeywords, ...matches])];
-      
-          // Update the textarea
-          const keywordsField = document.getElementById('keywords');
-          keywordsField.value = combinedKeywords.join(', ');
-          keywordsField.dispatchEvent(new Event('input')); // Trigger input event so persistence works
-      
-          // Close modal
-          const modal = bootstrap.Modal.getInstance(document.getElementById('modal-extractor'));
-          modal.hide();
-      
-          // Clear modal input
-          document.getElementById('modalInputData').value = "";
-      }
 
-    </script>
-    <!--Main Function-->
+    <!--Main Function w/ Persistence-->
+    <script src="js/kql_query.js"></script> <!-- Link to sidebar toggler -->
+    <!--Main Function w/ Persistence-->
 
     <!--Additional Functions-->
     <script>
       // Clear Button functionality
       document.getElementById('clearBtn').addEventListener('click', function() {
-        document.getElementById('inputText').value = '';
-        document.getElementById('outputText').value = '';
-        document.getElementById('keywords').value = '';
-        localStorage.setItem('koi_extractorInputText', '');  // Clear the saved value from localStorage
-        localStorage.setItem('koi_extractorKeywords', '');  // Clear the saved value from localStorage
+        localStorage.setItem('koi_signin_email', '');  // Clear the saved value from localStorage
+        localStorage.setItem('koi_IP_address', '');  // Clear the saved value from localStorage
+        localStorage.setItem('koi_audit_email', '');  // Clear the saved value from localStorage
+        window.location.reload(); // Refresh the page
       });
       // Copy Button functionality
       document.getElementById('copyBtn').addEventListener('click', function() {
@@ -312,51 +397,6 @@
       });
     </script>
     <!--Additional Functions-->
-    <!--Notifications-->
-    <script>
-	  function showNotification(message) {
-	  // Update dropdown text
-	  document.getElementById("notifText").innerText = message;
-	  // Update badge count
-	  document.getElementById("notifBadge").innerText = "1";
-	  // Enable bell dropdown
-	  document.getElementById("notifBell").classList.remove("disabled");
-	  }
-	  function clearNotification() {
-	  document.getElementById("notifText").innerText = "";
-	  document.getElementById("notifBadge").innerText = "";
-	  // Disable bell dropdown when no error
-	  document.getElementById("notifBell").classList.add("disabled");
-	  }    
-    </script>
-
-    <!--Persistence-->
-    <script>
-      // Load saved values for the textboxes
-      window.onload = function () {
-          const savedInputText = localStorage.getItem('koi_extractorInputText');
-          const savedKeywords = localStorage.getItem('koi_extractorKeywords');
-      
-          if (savedInputText !== null) {
-              document.getElementById('inputText').value = savedInputText;
-          }
-          if (savedKeywords !== null) {
-              document.getElementById('keywords').value = savedKeywords;
-          }
-          
-          extractLines();
-      };
-      
-      // Save inputText whenever it changes
-      document.getElementById('inputText').addEventListener('input', function () {
-          localStorage.setItem('koi_extractorInputText', this.value);
-      });
-      
-      // Save keywords whenever it changes
-      document.getElementById('keywords').addEventListener('input', function () {
-          localStorage.setItem('koi_extractorKeywords', this.value);
-      });
-    </script>
 
     <!--begin::Third Party Plugins-->
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
@@ -373,39 +413,6 @@
   <!-- Toast Notification -->
   <script src="js/toast.js"></script>
   <!-- Toast Notification -->
-
-  <!-- Modal -->
-  <div class="modal fade" id="modal-extractor">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Extract Keywords from Data</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-          <div class="modal-body">
-            <div class="card-body d-flex flex-column">
-              <span class="mb-2">Paste your data here:</span>
-              <div class="mb-2">
-                <textarea id="modalInputData" class="form-control" placeholder="FieldName: Data" style="height: 150px;"></textarea>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-primary" id="confirmModalBtn">Confirm</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- Modal -->
-  <!-- Listener -->
-  <script>
-    document.getElementById('confirmModalBtn').addEventListener('click', function() {
-      extractKeywordsFromPopup();
-      extractLines()
-    });
-  </script>
-
+  
 </html>
+
