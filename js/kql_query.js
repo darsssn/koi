@@ -177,7 +177,7 @@ function emailEventsKQL() {
     if (recipientEmailList.length) {
       const recipientEmailDynamic = recipientEmailList.map(e => `'${e}'`).join(", ");
       variables += `\nlet recipientEmail = dynamic([${recipientEmailDynamic}]);`;
-      filters += `\n| where recipientFromAddress in~ (recipientEmail) or recipientMailFromAddress in~ (recipientEmail)`;
+      filters += `\n| where RecipientEmailAddress in~ (recipientEmail)`;
     }
   }
 
