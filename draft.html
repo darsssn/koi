@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Draft</title>
+</head>
+<body>
+
+<script>
+  const lastDraft = localStorage.getItem("koi_last_draft");
+
+  if (lastDraft) {
+    window.location.replace(`draft_${lastDraft}.html`);
+  } else {
+    // First-time users
+    window.location.replace("draft_1.html");
+  }
+</script>
+
+</body>
+</html>

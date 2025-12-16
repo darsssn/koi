@@ -231,6 +231,7 @@
     <script>
       // Load the saved value when the page is loaded
       window.onload = function() {
+        localStorage.setItem("koi_last_draft", 1); // Save the current draft index
         const textbox = document.getElementById('inputText');
         const savedValue = localStorage.getItem('koi_Draft_1');
         if (savedValue) {
