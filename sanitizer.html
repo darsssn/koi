@@ -51,7 +51,7 @@
               </a>
             </li>
             <li class="nav-item d-none d-md-block"><a href="draft.html" class="nav-link">Draft</a></li>
-            <li class="nav-item d-none d-md-block"><a href="kql.html" class="nav-link">KQL<span class="navbar-badge badge text-bg-info">?</span></a></li>
+            <li class="nav-item d-none d-md-block"><a href="kql.html" class="nav-link">KQL</a></li>
             <li class="nav-item d-none d-md-block"><a href="merger.html" class="nav-link">Merge</a></li>
             <li class="nav-item d-none d-md-block"><a href="sanitizer.html" class="nav-link active">Sanitize</a></li>
             <li class="nav-item d-none d-md-block"><a href="extractor.html" class="nav-link">Extract</a></li>
@@ -192,6 +192,7 @@
                       <label class="form-label">Input / Output</label>
                       <div class="btn-group mb-2" role="group">
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-sanitizer" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Extract Keywords</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrapIO()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
                         <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
                         <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
@@ -301,6 +302,25 @@
                   console.error('Error copying text: ', err);
               });
       });
+      // Function to toggle word wrap for both input and output textareas
+      function toggleWordWrapIO() {
+        const textareas = [
+          document.getElementById("inputText"),
+          document.getElementById("outputText")
+        ];
+
+        const isNoWrap = textareas[0].style.whiteSpace === "nowrap";
+
+        textareas.forEach(textarea => {
+          if (isNoWrap) {
+            textarea.style.whiteSpace = "normal";
+            textarea.setAttribute("wrap", "soft");
+          } else {
+            textarea.style.whiteSpace = "nowrap";
+            textarea.setAttribute("wrap", "off");
+          }
+        });
+      }
     </script>
     <!--Additional Functions-->
     <!--Notifications-->

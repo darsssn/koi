@@ -51,7 +51,7 @@
               </a>
             </li>
             <li class="nav-item d-none d-md-block"><a href="draft.html" class="nav-link">Draft</a></li>
-            <li class="nav-item d-none d-md-block"><a href="kql.html" class="nav-link">KQL<span class="navbar-badge badge text-bg-info">?</span></a></li>
+            <li class="nav-item d-none d-md-block"><a href="kql.html" class="nav-link">KQL</a></li>
             <li class="nav-item d-none d-md-block"><a href="merger.html" class="nav-link">Merge</a></li>
             <li class="nav-item d-none d-md-block"><a href="sanitizer.html" class="nav-link">Sanitize</a></li>
             <li class="nav-item d-none d-md-block"><a href="extractor.html" class="nav-link">Extract</a></li>
@@ -192,6 +192,7 @@
                       <label class="form-label">Text Editor</label>
                       <div class="btn-group mb-2" role="group">
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-outputText" onclick="loadOutputTextFromCache()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Previous Output</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
                         <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
                         <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
@@ -269,6 +270,20 @@
           textbox.blur();  // This will unselect the text by removing focus from the textarea
         });
       };
+      
+      // Function to toggle word wrap
+      function toggleWordWrap() {
+        const textarea = document.getElementById("inputText");
+      
+        // Check current wrap state and toggle
+        if (textarea.style.whiteSpace === "nowrap") {
+          textarea.style.whiteSpace = "normal";  // Turn on word wrap
+          textarea.setAttribute("wrap", "soft"); // Soft wrap
+        } else {
+          textarea.style.whiteSpace = "nowrap"; // Turn off word wrap
+          textarea.setAttribute("wrap", "off");  // Disable wrap
+        }
+      }      
     </script>
 
     <!--begin::Third Party Plugins-->

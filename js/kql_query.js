@@ -94,6 +94,33 @@ function auditKQL() {
   document.getElementById("outputText").value = kql_query_1;
 }
 
+function userInfoKQL() {
+  const emailInput = document.getElementById("userInfo_email").value.trim();
+
+  let filters = "";
+
+  // Email filter
+  if (emailInput) {
+    const emailList = emailInput
+      .split(",")
+      .map(e => e.trim())
+      .filter(Boolean);
+
+    if (emailList.length) {
+      const emailDynamic = emailList.map(e => `'${e}'`).join(", ");
+      filters += `\n| where AccountUPN in~ (${emailDynamic})`;
+    }
+  }
+
+  // KQL Query
+  const kql_query_1 = `IdentityInfo${filters}
+| where TimeGenerated > ago(90d)
+| summarize arg_max(TimeGenerated, *) by AccountUPN  
+| project AccountUPN, AccountDisplayName, AccountCreationTime, Department, JobTitle, CompanyName, IsAccountEnabled, City, Country, State`;
+
+  document.getElementById("outputText").value = kql_query_1;
+}
+
 function ipEventsKQL() {
   const ipInput = document.getElementById("ipEvent_IP_addresses").value.trim();
 
@@ -140,7 +167,8 @@ function urlEventsKQL() {
   }
 
   // KQL Query
-  const kql_query_1 = `DeviceNetworkEvents${filters}`;
+  const kql_query_1 = `DeviceNetworkEvents
+| where TimeGenerated > ago(7d)${filters}`;
 
   document.getElementById("outputText").value = kql_query_1;
 }
