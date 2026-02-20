@@ -3,7 +3,7 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Extract Device Info</title>
+    <title>OTP Generator</title>
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
@@ -32,6 +32,7 @@
     <!-- Link to Custom CSS -->
     <link href="css/custom.css" rel="stylesheet">
     <!-- Link to Custom CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/otpauth/dist/otpauth.umd.min.js"></script> <!-- Add OTPAuth Library -->
   </head>
   <!--end::Head-->
 
@@ -50,8 +51,7 @@
                 <i class="bi bi-list"></i>
               </a>
             </li>
-            <li class="nav-item d-none d-md-block"><a href="extract_userinfo.html" class="nav-link">User Info</a></li>
-            <li class="nav-item d-none d-md-block"><a href="extract_deviceinfo.html" class="nav-link active">Device Info</a></li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link active">OTP Generator</a></li>
           </ul>
           <!--end::Start Navbar Links-->
           <!--begin::End Navbar Links-->
@@ -137,7 +137,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link active">
+                <a href="extract_userinfo.html" class="nav-link">
                   <i class="nav-icon bi bi-code-slash"></i>
                   <p>Extractors</p>
                 </a>
@@ -149,7 +149,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="otp_generator.html" class="nav-link">
+                <a href="#" class="nav-link active">
                   <i class="nav-icon bi bi-qr-code"></i>
                   <p style="color: red">OTP Generator</p>
                 </a>
@@ -179,9 +179,9 @@
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
-            <div class="row g-3">
+            <div class="row g-2">
               <!--begin::Col-->
-              <div class="col-md-12">
+              <div class="col-md-7 mx-auto">
                 <!--begin::Input Group-->
                 <div class="card card-secondary card-outline mb-1">
                   <!--begin::Header-->
@@ -190,15 +190,29 @@
                   <!--begin::Body-->
                   <div class="card-body d-flex flex-column" style="height: 90vh;"> <!-- Adjust based on viewport height -->
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="form-label">Input / Output</label>
+                      <label class="form-label" id="accountsLabel">OTP Generator</label>
                       <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
-                        <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
+                        <input id="searchInput" class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-otp-accounts" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Accounts</button>
                       </div>
                     </div>
-                    <div class="input-group flex-grow-1">
-                      <textarea id="inputText" oninput="extractDeviceData()" class="form-control" aria-label="With textarea" placeholder="Input here..."></textarea>
-                      <textarea readonly id="outputText" class="form-control" aria-label="With textarea" placeholder="Output..."></textarea>
+                    <div class="card-body p-0 flex-grow-1 overflow-auto">
+                      <table class="table mb-0">
+                        <thead>
+                          <tr>
+                            <th style="width: 10px">OTP</th>
+                            <th>Account</th>
+                            <th style="width: 10px">Technology</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="align-middle">
+                            <td>123456</td>
+                            <td>Company One</td>
+                            <td>Microsoft</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                   <!--end::Body-->
@@ -216,164 +230,162 @@
       <!--end::App Main-->
     </div>
     <!--end::App Wrapper-->
+
     <!--Main Function-->
     <script>
-      function extractDeviceData() {
-      
-        // Clean input
-        const lines = document.getElementById('inputText').value
-          .split("\n")
-          .map(x => x.trim())
-          .filter(x => x !== "");
-      
-        const result = {
-          "Device Name": "",  // Always blank by your instruction
-          "Most logons": "N/A",
-          "Newest logon": "N/A",
-          "Primary user": "N/A",
-          "Domain": "N/A",
-          "OS": "N/A",
-          "SAM name": "N/A",
-          "Created on": "N/A",
-          "IP Addresses": "",
-          "Private": "N/A",
-          "Public": "N/A",
-          "MAC address": "N/A",
-          "Asset group": "N/A",
-          "Device AAD id": "N/A",
-          "Device id": "N/A"
-        };
-      
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i];
-      
-          // Most logons / Newest logon → 2 lines after
-          if (line === "Most logons") {
-            const val2 = lines[i+2] || "";
-            result["Most logons"] = `${val2}`.trim();
-          }
-          if (line === "Newest logon") {
-            const val2 = lines[i+2] || "";
-            result["Newest logon"] = `${val2}`.trim();
-          }
-      
-          // Basic fields: next line is value
-          const next = lines[i + 1] || "";
-      
-          if (line === "Primary user") result["Primary user"] = next;
-          if (line === "Domain") result["Domain"] = next;
-          if (line === "SAM name") result["SAM name"] = next;
-          if (line === "Created on") result["Created on"] = next;
-          if (line === "MAC address") result["MAC address"] = next;
-          if (line === "Asset group") result["Asset group"] = next;
-          if (line === "Device AAD id") result["Device AAD id"] = next;
-          if (line === "Device id") result["Device id"] = next;
-      
-          // OS → 2 lines
-          if (line === "OS") {
-            result["OS"] = `${lines[i+1] || ""} ${lines[i+2] || ""}`.trim();
-          }
-      
-          // IP Addresses block
-          if (line === "IP addresses") {
-            let j = i + 1;
-            while (j < lines.length) {
-              if (lines[j].startsWith("Private:"))
-                result["Private"] = lines[j].replace("Private:", "").trim();
-              else if (lines[j].startsWith("Public:"))
-                result["Public"] = lines[j].replace("Public:", "").trim();
-              else if (!lines[j].includes(":"))
-                break; // Stop when structure ends
-              j++;
-            }
-          }
+    const STORAGE_KEY = "koi_otp_accounts";
+    let accounts = [];
+    
+    function loadAccounts() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) return;
+    
+      accounts = stored.split("\n")
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(line => {
+          const parts = line.split("=");
+          if (parts.length !== 3) return null;
+    
+          return {
+            technology: parts[0],
+            account: parts[1],
+            secret: parts[2]
+          };
+        })
+        .filter(x => x !== null);
+    }
+    
+    function generateOTP(secret) {
+      const totp = new OTPAuth.TOTP({
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: secret
+      });
+    
+      return totp.generate();
+    }
+    
+    function renderTable() {
+      const tbody = document.querySelector("table tbody");
+      const searchValue = document.getElementById("searchInput")?.value.toLowerCase() || "";
+    
+      tbody.innerHTML = ""; // Clear table rows before rendering
+    
+      // Sort the accounts array alphabetically by account name
+      accounts.sort((a, b) => a.account.localeCompare(b.account));
+    
+      accounts
+        .filter(entry => {
+          if (!searchValue) return true;
+          return (
+            entry.account.toLowerCase().includes(searchValue) ||
+            entry.technology.toLowerCase().includes(searchValue)
+          );
+        })
+        .forEach(entry => {
+    
+          const otp = generateOTP(entry.secret); // Generate OTP
+    
+          const row = document.createElement("tr");
+          row.classList.add("align-middle");
+    
+          row.innerHTML = `
+            <td>${otp}</td>
+            <td>${entry.account}</td>
+            <td>${entry.technology}</td>
+          `;
+    
+          tbody.appendChild(row);
+        });
+
+        // Update the label with the count of displayed accounts
+        const accountsLabel = document.getElementById('accountsLabel');
+        if (accountsLabel) {
+          accountsLabel.innerHTML = `OTP Generator <small>(${accounts.length})</small>`;
         }
+    }
+    
+    function refreshOTPs() {
+      if (accounts.length === 0) return;
+      renderTable();
+    }
+    
+    function init() {
+      loadAccounts();
+      renderTable();
+      setInterval(refreshOTPs, 30000);
+    
+      document.getElementById("searchInput")
+        .addEventListener("input", renderTable);
+    }
+
+    function manageOTPAccounts() {    
+      const inputData = document.getElementById('modalInputData').value.trim();
+    
+      if (inputData.length === 0) {
+        showToast("Please enter valid account data.");
+        return;
+      }
+    
+      // Split the input data by new lines (assuming each line is in the format tech=account=key)
+      const lines = inputData.split("\n").map(line => line.trim());
       
-        // Output formatting
-        const orderedFields = [
-          "Device Name",
-          "Most logons",
-          "Newest logon",
-          "Primary user",
-          "Domain",
-          "OS",
-          "SAM name",
-          "Created on",
-          "IP Addresses",
-          "Private",
-          "Public",
-          "MAC address",
-          "Asset group",
-          "Device AAD id",
-          "Device id"
-        ];
-      
-        const output = orderedFields
-          .map(f => `${f}: ${result[f]}`)
-          .join("\n");
-      
-        document.getElementById("outputText").value = output;
-      } 
+      let formattedData = [];
+      let invalidLines = 0;
+    
+      // Process each line and split it by '='
+      lines.forEach((line) => {
+        const parts = line.split('=');
+        
+        // If the line contains exactly 3 parts (tech, account, key)
+        if (parts.length === 3) {
+          const [tech, account, key] = parts;  // Get tech, account, and key
+          formattedData.push({ tech, account, key });
+        } else {
+          invalidLines++;  // Count invalid lines
+        }
+      });
+    
+      // If there are any invalid lines, warn the user
+      if (invalidLines > 0) {
+        showToast(`${invalidLines} invalid line(s) found. Please ensure each line follows the format: tech=account=key.`);
+        return;
+      }
+    
+      // If we have valid data, save it to localStorage
+      if (formattedData.length > 0) {
+        const newAccounts = formattedData.map(acc => `${acc.tech}=${acc.account}=${acc.key}`).join("\n");
+        localStorage.setItem("koi_otp_accounts", newAccounts);
+    
+        // Close the modal using Bootstrap's Modal instance
+        const modal = bootstrap.Modal.getInstance(document.getElementById("modal-otp-accounts"));
+        modal.hide();
+    
+        showToast("Accounts saved successfully! Please refresh the page to see the changes.");
+      } else {
+        showToast("No valid data to save. Please ensure each line follows the format: tech=account=key.");
+      }
+    }
+    
+    document.addEventListener("DOMContentLoaded", init);
     </script>
     <!--Main Function-->
 
     <!--Additional Functions-->
-    <script>
-      // Clear Button functionality
-      document.getElementById('clearBtn').addEventListener('click', function() {
-        document.getElementById('inputText').value = '';
-        document.getElementById('outputText').value = '';
-        localStorage.setItem('koi_extractDeviceInfoInputText', '');  // Clear the saved value from localStorage
-      });
-      // Copy Button functionality
-      document.getElementById('copyBtn').addEventListener('click', function() {
-          const textbox = document.getElementById('outputText');
-          navigator.clipboard.writeText(textbox.value)  // Modern Clipboard API
-              .then(function() {
-                  showToast("Text copied to clipboard!"); // js/toast.js
-              })
-              .catch(function(err) {
-                  console.error('Error copying text: ', err);
-              });
-      });
-    </script>
     <!--Additional Functions-->
-
-    <!--Notifications-->
-    <script>
-	  function showNotification(message) {
-	  // Update dropdown text
-	  document.getElementById("notifText").innerText = message;
-	  // Update badge count
-	  document.getElementById("notifBadge").innerText = "1";
-	  // Enable bell dropdown
-	  document.getElementById("notifBell").classList.remove("disabled");
-	  }
-	  function clearNotification() {
-	  document.getElementById("notifText").innerText = "";
-	  document.getElementById("notifBadge").innerText = "";
-	  // Disable bell dropdown when no error
-	  document.getElementById("notifBell").classList.add("disabled");
-	  }    
-    </script>
 
     <!--Persistence-->
     <script>
-      // Function to load saved values for the textboxes
-      window.onload = function() {
-        const savedValue1 = localStorage.getItem('koi_extractDeviceInfoInputText');
+      // Load saved values for the textboxes
+      window.onload = function () {
+          const savedOTPAccounts = localStorage.getItem('koi_otp_accounts');
       
-        if (savedValue1) {
-          document.getElementById('inputText').value = savedValue1;
-          extractDeviceData(); // Process the saved input on load
-        }
+          if (savedOTPAccounts !== null) {
+              document.getElementById('modalInputData').value = savedOTPAccounts;
+          }
       };
-      
-      // Save the value of Textbox 1 whenever it changes
-      document.getElementById('inputText').addEventListener('input', function() {
-        const value = this.value;
-        localStorage.setItem('koi_extractDeviceInfoInputText', value);
-      });      
     </script>
 
     <!--begin::Third Party Plugins-->
@@ -391,5 +403,38 @@
   <!-- Toast Notification -->
   <script src="js/toast.js"></script>
   <!-- Toast Notification -->
+  
+  <!-- Modal -->
+  <div class="modal fade" id="modal-otp-accounts">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Manage OTP Accounts</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+          <div class="modal-body">
+            <div class="card-body d-flex flex-column">
+              <span class="mb-2">Input data here:</span>
+              <div class="mb-2">
+                <textarea id="modalInputData" class="form-control" placeholder="Format: tech=account=key" style="height: 300px;"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-primary" id="confirmModalBtn">Confirm</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- Modal -->
+  <!-- Listener -->
+  <script>
+    document.getElementById('confirmModalBtn').addEventListener('click', function() {
+      manageOTPAccounts()
+    });
+  </script>
 
 </html>
