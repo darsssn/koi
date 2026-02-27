@@ -3,7 +3,7 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Extract Device Info</title>
+    <title>CSV Parser</title>
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
@@ -78,12 +78,14 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Input / Output</label>
                       <div class="btn-group mb-2" role="group">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-csv-upload" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Manual Upload</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrapIO()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
                         <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
                         <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
                     </div>
                     <div class="input-group flex-grow-1">
-                      <textarea id="inputText" oninput="extractDeviceData()" class="form-control" aria-label="With textarea" placeholder="Input here..."></textarea>
+                      <textarea id="inputText" oninput="parse_CSV()" class="form-control" aria-label="With textarea" placeholder="Input here..."></textarea>
                       <textarea readonly id="outputText" class="form-control" aria-label="With textarea" placeholder="Output..."></textarea>
                     </div>
                   </div>
@@ -104,102 +106,87 @@
     <!--end::App Wrapper-->
     <!--Main Function-->
     <script>
-      function extractDeviceData() {
+      function parse_CSV() {
+        const csvText = document.getElementById("inputText").value.trim();
+        const outputElement = document.getElementById("outputText");
       
-        // Clean input
-        const lines = document.getElementById('inputText').value
-          .split("\n")
-          .map(x => x.trim())
-          .filter(x => x !== "");
+        // Clear previous output
+        outputElement.value = "";
       
-        const result = {
-          "Device Name": "",  // Always blank by your instruction
-          "Most logons": "N/A",
-          "Newest logon": "N/A",
-          "Primary user": "N/A",
-          "Domain": "N/A",
-          "OS": "N/A",
-          "SAM name": "N/A",
-          "Created on": "N/A",
-          "IP Addresses": "",
-          "Private": "N/A",
-          "Public": "N/A",
-          "MAC address": "N/A",
-          "Asset group": "N/A",
-          "Device AAD id": "N/A",
-          "Device id": "N/A"
-        };
+        if (!csvText) {
+          showNotification("CSV input is empty.");
+          return;
+        }
       
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i];
+        const lines = csvText
+          .split(/\r?\n/)
+          .map(line => line.trim())
+          .filter(line => line !== "");
       
-          // Most logons / Newest logon → 2 lines after
-          if (line === "Most logons") {
-            const val2 = lines[i+2] || "";
-            result["Most logons"] = `${val2}`.trim();
-          }
-          if (line === "Newest logon") {
-            const val2 = lines[i+2] || "";
-            result["Newest logon"] = `${val2}`.trim();
-          }
+        // --- ERROR CHECK: Must contain header + at least 1 data row ---
+        if (lines.length < 2) {
+          showNotification("CSV must contain at least one header row and one data row.", "no_data");
+          return;
+        }
       
-          // Basic fields: next line is value
-          const next = lines[i + 1] || "";
+        const headers = splitCSVLine(lines[0]).map(h => h.trim());
       
-          if (line === "Primary user") result["Primary user"] = next;
-          if (line === "Domain") result["Domain"] = next;
-          if (line === "SAM name") result["SAM name"] = next;
-          if (line === "Created on") result["Created on"] = next;
-          if (line === "MAC address") result["MAC address"] = next;
-          if (line === "Asset group") result["Asset group"] = next;
-          if (line === "Device AAD id") result["Device AAD id"] = next;
-          if (line === "Device id") result["Device id"] = next;
+        // Validate each row BEFORE processing
+        for (let i = 1; i < lines.length; i++) {
+          const values = splitCSVLine(lines[i]);
       
-          // OS → 2 lines
-          if (line === "OS") {
-            result["OS"] = `${lines[i+1] || ""} ${lines[i+2] || ""}`.trim();
-          }
-      
-          // IP Addresses block
-          if (line === "IP addresses") {
-            let j = i + 1;
-            while (j < lines.length) {
-              if (lines[j].startsWith("Private:"))
-                result["Private"] = lines[j].replace("Private:", "").trim();
-              else if (lines[j].startsWith("Public:"))
-                result["Public"] = lines[j].replace("Public:", "").trim();
-              else if (!lines[j].includes(":"))
-                break; // Stop when structure ends
-              j++;
-            }
+          if (values.length !== headers.length) {
+            showNotification(`Row ${i + 1} has ${values.length} columns but expected ${headers.length}.`, "invalid_data");
+            return; // Stop immediately
           }
         }
       
-        // Output formatting
-        const orderedFields = [
-          "Device Name",
-          "Most logons",
-          "Newest logon",
-          "Primary user",
-          "Domain",
-          "OS",
-          "SAM name",
-          "Created on",
-          "IP Addresses",
-          "Private",
-          "Public",
-          "MAC address",
-          "Asset group",
-          "Device AAD id",
-          "Device id"
-        ];
+        // Clear notification if everything is fine
+        clearNotification();
       
-        const output = orderedFields
-          .map(f => `${f}: ${result[f]}`)
-          .join("\n");
+        const outputLines = [];
       
-        document.getElementById("outputText").value = output;
-      } 
+        for (let i = 1; i < lines.length; i++) {
+          const values = splitCSVLine(lines[i]);
+      
+          for (let j = 0; j < headers.length; j++) {
+            outputLines.push(`${headers[j]}: ${values[j].trim()}`);
+          }
+        }
+      
+        outputElement.value = outputLines.join("\n");
+      }
+
+      function splitCSVLine(line) {
+        const result = [];
+        let current = "";
+        let insideQuotes = false;
+      
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          const nextChar = line[i + 1];
+      
+          if (char === '"') {
+            // Handle escaped quotes ""
+            if (insideQuotes && nextChar === '"') {
+              current += '"';
+              i++; // Skip next quote
+            } else {
+              insideQuotes = !insideQuotes;
+            }
+          } 
+          else if (char === "," && !insideQuotes) {
+            result.push(current);
+            current = "";
+          } 
+          else {
+            current += char;
+          }
+        }
+      
+        result.push(current);
+        return result;
+      }
     </script>
     <!--Main Function-->
 
@@ -209,7 +196,7 @@
       document.getElementById('clearBtn').addEventListener('click', function() {
         document.getElementById('inputText').value = '';
         document.getElementById('outputText').value = '';
-        localStorage.setItem('koi_extractDeviceInfoInputText', '');  // Clear the saved value from localStorage
+        localStorage.setItem('koi_csv_parser_inputText', '');  // Clear the saved value from localStorage
       });
       // Copy Button functionality
       document.getElementById('copyBtn').addEventListener('click', function() {
@@ -222,6 +209,25 @@
                   console.error('Error copying text: ', err);
               });
       });
+      // Function to toggle word wrap for both input and output textareas
+      function toggleWordWrapIO() {
+        const textareas = [
+          document.getElementById("inputText"),
+          document.getElementById("outputText")
+        ];
+
+        const isNoWrap = textareas[0].style.whiteSpace === "nowrap";
+
+        textareas.forEach(textarea => {
+          if (isNoWrap) {
+            textarea.style.whiteSpace = "normal";
+            textarea.setAttribute("wrap", "soft");
+          } else {
+            textarea.style.whiteSpace = "nowrap";
+            textarea.setAttribute("wrap", "off");
+          }
+        });
+      }
     </script>
     <!--Additional Functions-->
 
@@ -229,18 +235,18 @@
     <script>
       // Function to load saved values for the textboxes
       window.onload = function() {
-        const savedValue1 = localStorage.getItem('koi_extractDeviceInfoInputText');
+        const savedValue1 = localStorage.getItem('koi_csv_parser_inputText');
       
         if (savedValue1) {
           document.getElementById('inputText').value = savedValue1;
-          extractDeviceData(); // Process the saved input on load
+          parse_CSV(); // Process the saved input on load
         }
       };
       
       // Save the value of Textbox 1 whenever it changes
       document.getElementById('inputText').addEventListener('input', function() {
         const value = this.value;
-        localStorage.setItem('koi_extractDeviceInfoInputText', value);
+        localStorage.setItem('koi_csv_parser_inputText', value);
       });      
     </script>
 
@@ -253,8 +259,53 @@
     <script src="js/color_mode_toggler.js"></script> <!-- Link to color mode toggler -->
     <script src="js/sidebar_toggle.js"></script> <!-- Link to sidebar toggler -->
     <script src="js/toast.js"></script> <!-- Toast Notification -->
+    <script src="js/notifications.js"></script> <!--Notifications-->
     <!--end::Third Party / Custom Plugins-->
   </body>
   <!--end::Body-->
 
+  <!-- Modal -->
+  <div class="modal fade" id="modal-csv-upload">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Manually upload .csv file</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+          <div class="modal-body">
+            <div class="card-body d-flex flex-column">
+              <input type="file" id="fileInput" class="file-input" accept=".csv" />
+            </div>
+          </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- Modal -->
+  <!-- Listener -->
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const csvInput = document.getElementById("inputText");
+
+    fileInput.addEventListener("change", function() {
+        const file = this.files[0];
+        if (!file) return;
+    
+        const reader = new FileReader();
+    
+        reader.onload = function(event) {
+            csvInput.value = event.target.result;
+            localStorage.setItem('koi_csv_parser_inputText', event.target.result); // Save to localStorage
+            parse_CSV(); // Auto-parse after upload
+        };
+    
+        reader.readAsText(file);
+
+        // Close the modal using Bootstrap's Modal instance
+        const modal = bootstrap.Modal.getInstance(document.getElementById("modal-csv-upload"));
+        modal.hide();
+    });
+  </script>
+  
 </html>
