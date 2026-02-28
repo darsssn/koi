@@ -78,8 +78,8 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Input / Output</label>
                       <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
-                        <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
+                        <button type="button" class="btn btn-secondary" onclick="location.reload()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
+                        <button type="button" class="btn btn-secondary" onclick="copyTextarea('outputText')" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
                     </div>
                     <div class="input-group flex-grow-1">
@@ -106,27 +106,6 @@
     <script src="js/otp_tool_v2.js"></script>
     <!--Main Function-->
 
-    <!--Additional Functions-->
-    <script>
-      // Clear Button functionality
-      document.getElementById('clearBtn').addEventListener('click', function() {
-        document.getElementById('inputText').value = '';
-        document.getElementById('outputText').value = '';
-      });
-      // Copy Button functionality
-      document.getElementById('copyBtn').addEventListener('click', function() {
-          const textbox = document.getElementById('outputText');
-          navigator.clipboard.writeText(textbox.value)  // Modern Clipboard API
-              .then(function() {
-                  showToast("Text copied to clipboard!"); // js/toast.js
-              })
-              .catch(function(err) {
-                  console.error('Error copying text: ', err);
-              });
-      });
-    </script>
-    <!--Additional Functions-->
-
     <!--begin::Third Party / Custom Plugins-->
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
@@ -136,6 +115,7 @@
     <script src="js/color_mode_toggler.js"></script> <!-- Link to color mode toggler -->
     <script src="js/sidebar_toggle.js"></script> <!-- Link to sidebar toggler -->
     <script src="js/toast.js"></script> <!-- Toast Notification -->
+    <script src="js/utils.js"></script> <!-- Link to utility functions (e.g., copy, clear, word wrap) -->
     <script src="js/notifications.js"></script> <!--Notifications-->
     <!--end::Third Party / Custom Plugins-->
   </body>

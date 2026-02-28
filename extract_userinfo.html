@@ -78,8 +78,8 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Input / Output</label>
                       <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
-                        <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearMultiple(['koi_extractUserInfoInputText'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
+                        <button type="button" class="btn btn-secondary" onclick="copyTextarea('outputText')" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
                     </div>
                     <div class="input-group flex-grow-1">
@@ -195,28 +195,6 @@
     </script>
     <!--Main Function-->
 
-    <!--Additional Functions-->
-    <script>
-      // Clear Button functionality
-      document.getElementById('clearBtn').addEventListener('click', function() {
-        document.getElementById('inputText').value = '';
-        document.getElementById('outputText').value = '';
-        localStorage.setItem('koi_extractUserInfoInputText', '');  // Clear the saved value from localStorage
-      });
-      // Copy Button functionality
-      document.getElementById('copyBtn').addEventListener('click', function() {
-          const textbox = document.getElementById('outputText');
-          navigator.clipboard.writeText(textbox.value)  // Modern Clipboard API
-              .then(function() {
-                  showToast("Text copied to clipboard!"); // js/toast.js
-              })
-              .catch(function(err) {
-                  console.error('Error copying text: ', err);
-              });
-      });
-    </script>
-    <!--Additional Functions-->
-
     <!--Persistence-->
     <script>
       // Function to load saved values for the textboxes
@@ -245,6 +223,7 @@
     <script src="js/color_mode_toggler.js"></script> <!-- Link to color mode toggler -->
     <script src="js/sidebar_toggle.js"></script> <!-- Link to sidebar toggler -->
     <script src="js/toast.js"></script> <!-- Toast Notification -->
+    <script src="js/utils.js"></script> <!-- Link to utility functions (e.g., copy, clear, word wrap) -->
     <!--end::Third Party / Custom Plugins-->
   </body>
   <!--end::Body-->

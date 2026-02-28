@@ -249,9 +249,9 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Query</label>
                       <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
-                        <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
-                        <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap(['outputText'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearMultiple(['koi_signin_email', 'koi_IP_address', 'koi_audit_email'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
+                        <button type="button" class="btn btn-secondary" onclick="copyTextarea('outputText')" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
                     </div>
                     <div class="input-group mb-2 flex-grow-1">
@@ -278,42 +278,6 @@
     <script src="js/kql_query.js"></script> <!-- Link to sidebar toggler -->
     <!--Main Function w/ Persistence-->
 
-    <!--Additional Functions-->
-    <script>
-      // Clear Button functionality
-      document.getElementById('clearBtn').addEventListener('click', function() {
-        localStorage.setItem('koi_signin_email', '');  // Clear the saved value from localStorage
-        localStorage.setItem('koi_IP_address', '');  // Clear the saved value from localStorage
-        localStorage.setItem('koi_audit_email', '');  // Clear the saved value from localStorage
-        window.location.reload(); // Refresh the page
-      });
-      // Copy Button functionality
-      document.getElementById('copyBtn').addEventListener('click', function() {
-          const textbox = document.getElementById('outputText');
-          navigator.clipboard.writeText(textbox.value)  // Modern Clipboard API
-              .then(function() {
-                  showToast("Text copied to clipboard!"); // js/toast.js
-              })
-              .catch(function(err) {
-                  console.error('Error copying text: ', err);
-              });
-      });
-      // Function to toggle word wrap
-      function toggleWordWrap() {
-        const textarea = document.getElementById("outputText");
-      
-        // Check current wrap state and toggle
-        if (textarea.style.whiteSpace === "nowrap") {
-          textarea.style.whiteSpace = "normal";  // Turn on word wrap
-          textarea.setAttribute("wrap", "soft"); // Soft wrap
-        } else {
-          textarea.style.whiteSpace = "nowrap"; // Turn off word wrap
-          textarea.setAttribute("wrap", "off");  // Disable wrap
-        }
-      }  
-    </script>
-    <!--Additional Functions-->
-
     <!--begin::Third Party / Custom Plugins-->
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
@@ -323,6 +287,7 @@
     <script src="js/color_mode_toggler.js"></script> <!-- Link to color mode toggler -->
     <script src="js/sidebar_toggle.js"></script> <!-- Link to sidebar toggler -->
     <script src="js/toast.js"></script> <!-- Toast Notification -->
+    <script src="js/utils.js"></script> <!-- Link to utility functions (e.g., copy, clear, word wrap) -->
     <!--end::Third Party / Custom Plugins-->
   </body>
   <!--end::Body-->

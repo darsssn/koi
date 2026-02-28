@@ -78,9 +78,9 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Draft</label>
                       <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
-                        <button type="button" class="btn btn-secondary" id="clearBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
-                        <button type="button" class="btn btn-secondary" id="copyBtn" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap(['inputText'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearMultiple(['koi_Draft_3'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
+                        <button type="button" class="btn btn-secondary" onclick="copyTextarea('inputText')" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
                       </div>
                     </div>
                     <div class="input-group mb-2 flex-grow-1">
@@ -132,42 +132,7 @@
           localStorage.setItem('koi_Draft_3', value);
           updateCharCount(value);  // Update character count on input
         });
-    
-        // Clear Button functionality
-        document.getElementById('clearBtn').addEventListener('click', function() {
-          textbox.value = '';  // Clear the textarea
-          localStorage.setItem('koi_Draft_3', '');  // Clear the saved value from localStorage
-          updateCharCount('');  // Reset the character count to 0
-        });
-    
-        // Copy Button functionality
-        document.getElementById('copyBtn').addEventListener('click', function() {
-          textbox.select();  // Select the contents of the textarea
-          document.execCommand('copy');  // Execute the copy command to copy the selected text
-          // js/toast.js
-          showToast("Text copied to clipboard!");
-          textbox.blur();  // This will unselect the text by removing focus from the textarea
-        });
       };
-      
-      // Function to update character count display
-      function updateCharCount(text) {
-        document.getElementById('charCount').textContent = "Char count: " + text.length;
-      }
-
-      // Function to toggle word wrap
-      function toggleWordWrap() {
-        const textarea = document.getElementById("inputText");
-      
-        // Check current wrap state and toggle
-        if (textarea.style.whiteSpace === "nowrap") {
-          textarea.style.whiteSpace = "normal";  // Turn on word wrap
-          textarea.setAttribute("wrap", "soft"); // Soft wrap
-        } else {
-          textarea.style.whiteSpace = "nowrap"; // Turn off word wrap
-          textarea.setAttribute("wrap", "off");  // Disable wrap
-        }
-      }
     </script>
 
     <!--begin::Third Party / Custom Plugins-->
@@ -179,6 +144,7 @@
     <script src="js/color_mode_toggler.js"></script> <!-- Link to color mode toggler -->
     <script src="js/sidebar_toggle.js"></script> <!-- Link to sidebar toggler -->
     <script src="js/toast.js"></script> <!-- Toast Notification -->
+    <script src="js/utils.js"></script> <!-- Link to utility functions (e.g., copy, clear, word wrap) -->
     <!--end::Third Party / Custom Plugins-->
   </body>
   <!--end::Body-->
