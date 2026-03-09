@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <!--begin::Head-->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Extract Cortex Alert Data</title>
+    <!--begin::Accessibility Meta Tags-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <!--end::Accessibility Meta Tags-->
+    <!--begin::Accessibility Features-->
+    <!-- Skip links will be dynamically added by accessibility.js -->
+    <meta name="supported-color-schemes" content="light dark" />
+    <link rel="preload" href="css/adminlte.css" as="style" />
+    <!--end::Accessibility Features-->
+    <!--begin::Fonts-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" media="print" onload="this.media='all'"/>
+    <!--end::Fonts-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
+    <link rel="stylesheet" href="css/adminlte.css"/>
+    <!--end::Required Plugin(AdminLTE)-->
+    <link href="css/custom.css" rel="stylesheet"> <!-- Link to Custom CSS -->
+    <script src="js/navigation.js"></script> <!-- Link to dynamic navigation generator -->
+    <script src="js/static_nav.js"></script> <!-- Link to static navigation generator -->
+  </head>
+  <!--end::Head-->
+
+  <!--begin::Body-->
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
+    <!--begin::App Wrapper-->
+    <div class="app-wrapper">
+      <!--begin::Header-->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <!--begin::Container-->
+        <div class="container-fluid">
+          <!-- everything will be injected via navbar.js -->
+        </div>
+        <!--end::Container-->
+      </nav>
+      <!--end::Header-->
+      <!--begin::Sidebar-->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <!-- everything will be injected via sidebar.js -->
+      </aside>
+      <!--end::Sidebar-->
+      <!--begin::App Main-->
+      <main class="app-main">
+        <!--begin::App Content Header-->
+        <div class="app-content-header" style="height: 10px; padding-top: 5px; padding-bottom: 5px;">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+                <!--put header here if needed---------------------------------------------------->
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content Header-->
+        <!--begin::App Content-->
+        <div class="app-content">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row g-3">
+              <!--begin::Col-->
+              <div class="col-md-12">
+                <!--begin::Input Group-->
+                <div class="card card-secondary card-outline mb-1">
+                  <!--begin::Header-->
+                    <!--put header here if needed---------------------------------------------------->
+                  <!--end::Header-->
+                  <!--begin::Body-->
+                  <div class="card-body d-flex flex-column" style="height: 90vh;"> <!-- Adjust based on viewport height -->
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <label class="form-label">Input / Output</label>
+                      <div class="btn-group mb-2" role="group">
+                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap(['inputText', 'outputText'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearMultiple(['koi_extractCortexAlertDInputText'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
+                        <button type="button" class="btn btn-secondary" onclick="copyTextarea('outputText')" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
+                      </div>
+                    </div>
+                    <div class="input-group flex-grow-1">
+                      <textarea id="inputText" oninput="extractCortexAlertData()" class="form-control" aria-label="With textarea" placeholder="Input here..."></textarea>
+                      <textarea readonly id="outputText" class="form-control" aria-label="With textarea" placeholder="Output..."></textarea>
+                    </div>
+                  </div>
+                  <!--end::Body-->
+                </div>
+                <!--end::Input Group-->
+              </div>
+              <!--end::Col-->
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content-->
+      </main>
+      <!--end::App Main-->
+    </div>
+    <!--end::App Wrapper-->
+    <!--Main Function-->
+    <script>
+    const sections = ["General", "MITRE ATT&CK","Host","Rule", "Process Execution", "Initiator Details", "Target Process", "Causality Group Owner Details", "OS Parent"];
+    const ignoreList = ["WFBenign", "WFBenignLC", "WFMalware"];
+    
+    function extractCortexAlertData() {
+        
+        const text = document.getElementById("inputText").value;
+        const lines = text.split("\n");
+    
+        let currentSection = null;
+        let skipSection = false;
+        let isHostIpSection = false;  // Flag for Host IP collection
+        let ipAddresses = [];         // Array to store multiple IPs
+    
+        const result = {};
+        const errors = [];
+    
+        sections.forEach(section => result[section] = []);
+    
+        const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
+    
+        for (let line of lines) {
+            const trimmed = line.trim();
+            if (trimmed === "") continue;
+    
+            if (sections.includes(trimmed)) {
+                currentSection = trimmed;
+                skipSection = false;
+                continue;
+            }
+    
+            if (trimmed === "Tags" || trimmed === "QUICK LAUNCHER") {
+                skipSection = true;
+                continue;
+            }
+    
+            if (skipSection) continue;
+    
+            if (ignoreList.some(word => trimmed.includes(word))) continue;
+    
+            // --- Improved Host IP collection ---
+            if (trimmed.startsWith("Host IP")) {
+                console.log("Detected Host IP header:", trimmed);
+                isHostIpSection = true;
+                ipAddresses = [];
+                continue;
+            }
+
+            if (isHostIpSection) {
+                if (ipRegex.test(trimmed)) {
+                    console.log("Valid IP detected:", trimmed);
+                    ipAddresses.push(trimmed);
+                    continue; // prevent IP from entering Host section
+                } else {
+                    console.log("Non-IP detected, stopping IP collection:", trimmed);
+
+                    if (ipAddresses.length > 0) {
+                        result["Host"].push("Host IP");
+                        result["Host"].push(ipAddresses.join(", "));
+                        ipAddresses = [];
+                    }
+
+                    isHostIpSection = false;
+                    // DO NOT continue here so this non-IP line gets processed normally
+                }
+            }
+            // --- End Host IP collection ---
+    
+            if (currentSection === "Host") {
+                result["Host"].push(trimmed);
+            } else if (currentSection) {
+                result[currentSection].push(trimmed);
+            }
+        }
+    
+        // Edge case: add remaining IPs if last lines are IPs
+        if (ipAddresses.length > 0) {
+            result["Host"].push("Host IP");
+            result["Host"].push(ipAddresses.join(", "));
+        }
+    
+        sections.forEach(section => {
+            console.log(`Validating section '${section}' with length: ${result[section].length}`);
+
+            // Skip MITRE ATT&CK validation
+            if (section === "MITRE ATT&CK") return;
+
+            if (result[section].length % 2 !== 0) {
+                console.log(`Unparsed '${section}' section before validation:`, result[section]);
+                errors.push("Invalid number of lines found in the " + section + " section.");
+            }
+        });
+    
+        if (errors.length > 0) {
+            showNotification(errors, "error_invalid_lines");
+            document.getElementById("outputText").value = "";
+            return;
+        }
+    
+        let output = "";
+        removeNotification("error_invalid_lines");
+    
+    sections.forEach(section => {
+        output += "----- " + section + " -----\n";
+        const data = result[section];
+    
+        // Special handling for MITRE ATT&CK
+        if (section === "MITRE ATT&CK") {
+            data.forEach(line => {
+                if (line.trim() !== "") {
+                    output += line + "\n";
+                }
+            });
+        } else {
+            for (let i = 0; i < data.length; i += 2) {
+                output += data[i] + ": " + data[i + 1] + "\n";
+            }
+        }
+        output += "\n";
+    });
+    
+        document.getElementById("outputText").value = output;
+    }
+    </script>
+    <!--Main Function-->
+
+    <!--Persistence-->
+    <script>
+      // Function to load saved values for the textboxes
+      window.onload = function() {
+        const savedValue1 = localStorage.getItem('koi_extractCortexAlertDInputText');
+      
+        if (savedValue1) {
+          document.getElementById('inputText').value = savedValue1;
+          extractCortexAlertData(); // Process the saved input on load
+        }
+      };
+      
+      // Save the value of Textbox 1 whenever it changes
+      document.getElementById('inputText').addEventListener('input', function() {
+        const value = this.value;
+        localStorage.setItem('koi_extractCortexAlertDInputText', value);
+      });      
+    </script>
+
+    <!--begin::Third Party / Custom Plugins-->
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"></script>
+    <script src="js/adminlte.js"></script>
+    <script src="js/sidebar-scrollbar.js"></script> <!-- OverlayScrollbars Configure-->
+    <script src="js/color_mode_toggler.js"></script> <!-- Link to color mode toggler -->
+    <script src="js/sidebar_toggle.js"></script> <!-- Link to sidebar toggler -->
+    <script src="js/toast.js"></script> <!-- Toast Notification -->
+    <script src="js/utils.js"></script> <!-- Link to utility functions (e.g., copy, clear, word wrap) -->
+    <script src="js/notifications.js"></script> <!--Notifications-->
+    <!--end::Third Party / Custom Plugins-->
+  </body>
+  <!--end::Body-->
+
+</html>
