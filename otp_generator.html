@@ -27,6 +27,13 @@
     <script src="js/navigation.js"></script> <!-- Link to dynamic navigation generator -->
     <script src="js/static_nav.js"></script> <!-- Link to static navigation generator -->
     <script src="https://cdn.jsdelivr.net/npm/otpauth/dist/otpauth.umd.min.js"></script> <!-- Add OTPAuth Library -->
+    <style>
+      .otp-copy-btn {
+        --bs-btn-box-shadow: none;
+        --bs-btn-color: #ffffff;
+        --bs-btn-border-color: #212529;
+      }
+    </style>    
   </head>
   <!--end::Head-->
 
@@ -87,6 +94,7 @@
                       <table class="table mb-0">
                         <thead>
                           <tr>
+                            <th style="width: 10px"></th>                            
                             <th style="width: 10px">OTP</th>
                             <th>Account</th>
                             <th style="width: 10px">Technology</th>
@@ -179,11 +187,35 @@
           row.classList.add("align-middle");
     
           row.innerHTML = `
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-secondary otp-copy-btn">
+                <i class="bi bi-copy"></i>
+              </button>
+            </td>
             <td>${otp}</td>
             <td>${entry.account}</td>
             <td>${entry.technology}</td>
           `;
-    
+
+          // Copy button logic
+          const copyBtn = row.querySelector(".otp-copy-btn");
+          
+          copyBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(otp)
+              .then(() => {
+                showToast(`OTP copied: ${otp}`);
+                // Change icon temporarily
+                copyBtn.innerHTML = '<i class="bi bi-check2"></i>';
+                setTimeout(() => {
+                  copyBtn.innerHTML = '<i class="bi bi-copy"></i>';
+                }, 3000);
+              })
+              .catch(() => {
+                showToast("Failed to copy OTP.");
+              });
+          });          
+
           tbody.appendChild(row);
         });
 
