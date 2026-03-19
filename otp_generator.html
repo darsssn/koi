@@ -27,9 +27,18 @@
     <script src="js/navigation.js"></script> <!-- Link to dynamic navigation generator -->
     <script src="js/static_nav.js"></script> <!-- Link to static navigation generator -->
     <script src="https://cdn.jsdelivr.net/npm/otpauth/dist/otpauth.umd.min.js"></script> <!-- Add OTPAuth Library -->
-  
   </head>
   <!--end::Head-->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3LCJBCBQ7W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'G-3LCJBCBQ7W');
+  </script>  
 
   <!--begin::Body-->
   <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
@@ -203,7 +212,7 @@
                 copyBtn.innerHTML = '<i class="bi bi-check2"></i>';
                 setTimeout(() => {
                   copyBtn.innerHTML = '<i class="bi bi-copy"></i>';
-                }, 3000);
+                }, 5000);
               })
               .catch(() => {
                 showToast("Failed to copy OTP.");
