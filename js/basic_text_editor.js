@@ -94,3 +94,29 @@ function removeEmptyLines() {
   // Trigger input event to ensure persistence
   inputData.dispatchEvent(new Event('input')); 
 }
+
+function appendPrependLines() {
+  const inputData = document.getElementById("inputText");
+  const prefix = document.getElementById('modalInputData-prefix').value || "";
+  const suffix = document.getElementById('modalInputData-suffix').value || "";
+
+  const lines = inputData.value.split('\n');
+
+  const transformed = lines.map(line => {
+    if (line.trim() === '') return line; // preserve empty lines
+    return `${prefix}${line}${suffix}`;
+  });
+
+  inputData.value = transformed.join('\n');
+
+  // Close modal
+  const modal = bootstrap.Modal.getInstance(document.getElementById('modal-appendPrepend'));
+  if (modal) modal.hide();
+
+  // Clear inputs
+  document.getElementById('modalInputData-prefix').value = "";
+  document.getElementById('modalInputData-suffix').value = "";
+
+  // Trigger persistence
+  inputData.dispatchEvent(new Event('input'));
+}

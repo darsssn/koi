@@ -16,7 +16,7 @@ function injectToastHTML() {
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="toastCopy" class="toast border border-dark" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header bg-light text-dark">
-                <i class="bi bi-circle-fill me-2"></i>
+                <i class="bi bi-check2-circle me-2" style="color: #31A24C;"></i>
                 <strong class="me-auto">KOI</strong> <small>just now</small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>

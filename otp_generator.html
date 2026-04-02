@@ -27,6 +27,7 @@
     <script src="js/navigation.js"></script> <!-- Link to dynamic navigation generator -->
     <script src="js/static_nav.js"></script> <!-- Link to static navigation generator -->
     <script src="https://cdn.jsdelivr.net/npm/otpauth/dist/otpauth.umd.min.js"></script> <!-- Add OTPAuth Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script> <!-- Add jsQR Library -->
   </head>
   <!--end::Head-->
 
@@ -78,7 +79,7 @@
             <!--begin::Row-->
             <div class="row g-2">
               <!--begin::Col-->
-              <div class="col-md-7 mx-auto">
+              <div class="col-md-8 mx-auto">
                 <!--begin::Input Group-->
                 <div class="card card-secondary card-outline mb-1">
                   <!--begin::Header-->
@@ -91,6 +92,9 @@
                       <div class="input-group mb-2" style="max-width: 400px;">
                         <input id="searchInput" type="search" class="form-control" placeholder="Search" aria-label="Search">
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-otp-accounts">Accounts</button>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-addAccountviaQR" aria-label="Show QR Code">
+                          <i class="bi bi-qr-code-scan"></i>
+                        </button>
                       </div>
                     </div>
                     <div class="card-body p-0 flex-grow-1 overflow-auto">
@@ -101,6 +105,7 @@
                             <th style="width: 10px">OTP</th>
                             <th>Account</th>
                             <th style="width: 10px">Technology</th>
+                            <th style="width: 10px">User</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -108,6 +113,7 @@
                             <td>123456</td>
                             <td>Company One</td>
                             <td>Microsoft</td>
+                            <td>user@company.com</td>
                           </tr>
                         </tbody>
                       </table>
@@ -143,12 +149,13 @@
         .filter(line => line.length > 0)
         .map(line => {
           const parts = line.split("=");
-          if (parts.length !== 3) return null;
+          if (parts.length !== 4) return null;
     
           return {
             technology: parts[0],
             account: parts[1],
-            secret: parts[2]
+            secret: parts[2],
+            user: parts[3]
           };
         })
         .filter(x => x !== null);
@@ -179,7 +186,8 @@
           if (!searchValue) return true;
           return (
             entry.account.toLowerCase().includes(searchValue) ||
-            entry.technology.toLowerCase().includes(searchValue)
+            entry.technology.toLowerCase().includes(searchValue) ||
+            entry.user.toLowerCase().includes(searchValue)
           );
         })
         .forEach(entry => {
@@ -198,6 +206,7 @@
             <td>${otp}</td>
             <td>${entry.account}</td>
             <td>${entry.technology}</td>
+            <td>${entry.user}</td>
           `;
 
           // Copy button logic
@@ -261,10 +270,10 @@
       lines.forEach((line) => {
         const parts = line.split('=');
         
-        // If the line contains exactly 3 parts (tech, account, key)
-        if (parts.length === 3) {
-          const [tech, account, key] = parts;  // Get tech, account, and key
-          formattedData.push({ tech, account, key });
+        // If the line contains exactly 4 parts (tech, account, key, user)
+        if (parts.length === 4) {
+          const [tech, account, key, user] = parts;  // Get tech, account, key, and user
+          formattedData.push({ tech, account, key, user });
         } else {
           invalidLines++;  // Count invalid lines
         }
@@ -272,22 +281,26 @@
     
       // If there are any invalid lines, warn the user
       if (invalidLines > 0) {
-        showToast(`${invalidLines} invalid line(s) found. Please ensure each line follows the format: tech=account=key.`);
+        showToast(`${invalidLines} invalid line(s) found. Please ensure each line follows the format: tech=account=key=user.`);
         return;
       }
     
       // If we have valid data, save it to localStorage
       if (formattedData.length > 0) {
-        const newAccounts = formattedData.map(acc => `${acc.tech}=${acc.account}=${acc.key}`).join("\n");
+        const newAccounts = formattedData.map(acc => `${acc.tech}=${acc.account}=${acc.key}=${acc.user}`).join("\n");
         localStorage.setItem("koi_otp_accounts", newAccounts);
     
         // Close the modal using Bootstrap's Modal instance
         const modal = bootstrap.Modal.getInstance(document.getElementById("modal-otp-accounts"));
         modal.hide();
     
-        showToast("Accounts saved successfully! Please refresh the page to see the changes.");
+        showToast("Accounts saved successfully!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+        
       } else {
-        showToast("No valid data to save. Please ensure each line follows the format: tech=account=key.");
+        showToast("No valid data to save. Please ensure each line follows the format: tech=account=key=user.");
       }
     }
     
@@ -333,13 +346,13 @@
             <div class="card-body d-flex flex-column">
               <span class="mb-2">Input data here:</span>
               <div class="mb-2">
-                <textarea id="modalInputData" class="form-control" placeholder="Format: tech=account=key" style="height: 300px;"></textarea>
+                <textarea id="modalInputData" class="form-control" placeholder="Format: tech=account=key=user" style="height: 300px; white-space: nowrap; overflow-x: auto;"></textarea>
               </div>
             </div>
           </div>
           <div class="modal-footer justify-content-between">
             <button type="button" class="btn btn-primary" id="confirmModalBtn">Confirm</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="setTimeout(() => window.location.reload(), 750)">Discard Changes</button>
           </div>
       </div>
       <!-- /.modal-content -->
@@ -353,5 +366,159 @@
       manageOTPAccounts()
     });
   </script>
+
+  <!-- Add via QR Modal -->
+  <div class="modal fade" id="modal-addAccountviaQR">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Account via QR</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="card-body d-flex flex-column">
+            <!-- Upload Area (VISIBLE FIRST) -->
+            <div id="uploadContainer" class="text-center w-100 mb-3">
+              <div id="uploadArea" class="border rounded p-4 bg-body-tertiary mx-auto" style="max-width: 400px; cursor: pointer;">
+                <i class="bi bi-qr-code-scan fs-1 mb-2"></i>
+                <p class="mb-2">Click to upload QR image</p>
+                <input type="file" id="fileInput-qr" accept="image/*" hidden>
+                <button class="btn btn-primary btn-sm">Choose File</button>
+              </div>
+            </div>
+            <!-- Output Section (HIDDEN INITIALLY) -->
+            <div id="qrResultContainer" class="d-none">
+              <span class="mb-2">Raw QR value:</span>
+              <div class="mb-2">
+                <textarea id="modalInputData-qrValue" class="form-control" style="height: 150px;" readonly></textarea>
+              </div>
+              <span class="mb-2">Parsed: (tech=account=key=user)</span>
+              <div class="mb-2">
+                <textarea id="modalInputData-toAdd" class="form-control" style="height: 150px;" readonly></textarea>
+              </div>
+              <span class="mb-2">Note: For now, to avoid bugs, manually update the accounts using the parsed entry above (modify if applicable).</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-primary" onclick="window.location.reload()" id="clearModalBtn-addAccountviaQR" disabled>Clear</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.location.reload()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add via QR Modal -->
+
+    <!--Additional Function-->
+    <script>
+    const fileInput = document.getElementById("fileInput-qr");
+    const uploadArea = document.getElementById("uploadArea");
+    const uploadContainer = document.getElementById("uploadContainer");
+    const qrValueOutput = document.getElementById("modalInputData-qrValue");
+    const toAddOutput = document.getElementById("modalInputData-toAdd");
+    
+    // Click upload area triggers file input
+    uploadArea.addEventListener("click", () => fileInput.click());
+    
+    fileInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+    
+      // Only allow image files
+      if (!file.type.startsWith("image/")) {
+        document.getElementById("qrResultContainer").classList.remove("d-none");
+        qrValueOutput.value = "Please upload a valid image.";
+        return;
+      }
+    
+      const reader = new FileReader();
+    
+      reader.onload = function (event) {
+        const img = new Image();
+    
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+    
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+    
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, canvas.width, canvas.height);
+    
+          // Hide upload area, show result container
+          uploadContainer.classList.add("d-none");
+          document.getElementById("qrResultContainer").classList.remove("d-none");
+    
+          if (code) {
+            const qrData = code.data;
+    
+            // Show raw QR value
+            qrValueOutput.value = qrData;
+    
+            // Parse and display formatted account info
+            processQRCodeToAccount(qrData);
+    
+            // Enable Confirm button if valid
+            const clearQRBtn = document.getElementById("clearModalBtn-addAccountviaQR");
+            clearQRBtn.disabled = qrValueOutput.value.trim() === "";
+    
+          } else {
+            qrValueOutput.value = "No QR code detected.";
+            toAddOutput.value = "No QR code detected.";
+          }
+        };
+    
+        img.src = event.target.result;
+      };
+    
+      reader.readAsDataURL(file);
+    });
+
+    function processQRCodeToAccount(qrData) {
+      if (!qrData.startsWith("otpauth://")) {
+        toAddOutput.value = "";
+        showToast("Invalid OTP QR format.");
+        return;
+      }
+      try {
+        // Extract the label (everything after totp/ until ?)
+        const labelMatch = qrData.match(/^otpauth:\/\/totp\/([^?]+)/i);
+        let rawLabel = labelMatch ? decodeURIComponent(labelMatch[1]) : "";
+    
+        // Replace '+' with space for account
+        rawLabel = rawLabel.replace(/\+/g, ' ');
+    
+        // Extract the secret from query string
+        const secretMatch = qrData.match(/[?&]secret=([^&]+)/i);
+        const secret = secretMatch ? secretMatch[1] : "";
+    
+        // Extract the issuer from query string (optional)
+        const issuerMatch = qrData.match(/[?&]issuer=([^&]+)/i);
+        const technology = issuerMatch ? decodeURIComponent(issuerMatch[1]) : "Unknown";
+    
+        // Determine account and user
+        let account = rawLabel; // default
+        let user = rawLabel;    // default
+    
+        // If label contains colon, split to get user email
+        if (rawLabel.includes(":")) {
+          const parts = rawLabel.split(":");
+          account = parts[0].trim(); // everything before colon
+          user = parts[1].trim();    // email after colon
+        }
+    
+        // Format for internal storage
+        const formatted = `${technology}=${account}=${secret}=${user}`;
+        toAddOutput.value = formatted;
+    
+      } catch (err) {
+        toAddOutput.value = "";
+        showToast("Failed to parse QR.");
+      }
+    }
+    </script>
+    <!--Additional Function-->
 
 </html>

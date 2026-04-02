@@ -25,10 +25,11 @@ const NAVIGATION = {
 
   miscellaneous: {
     sidebar: { text: "Miscellaneous", href: "otp_tool_v2.html", icon: "bi-columns-gap" },
-    pages: ["otp_tool_v2.html", "csv_parser.html"],
+    pages: ["otp_tool_v2.html", "csv_parser.html", "qr_reader.html"],
     navbar: [
       { text: "OTP Script", href: "otp_tool_v2.html" },
-      { text: "CSV Parser", href: "csv_parser.html" }
+      { text: "CSV Parser", href: "csv_parser.html" },
+      { text: "QR Reader", href: "qr_reader.html" }
     ]
   },
 
