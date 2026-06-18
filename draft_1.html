@@ -78,9 +78,10 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Draft</label>
                       <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap(['inputText'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
-                        <button type="button" class="btn btn-secondary" onclick="clearMultiple(['koi_Draft_1'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
-                        <button type="button" class="btn btn-secondary" onclick="copyTextarea('inputText')" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
+                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="toggleLock(['inputText'], 'koi_draft1_lock')" id="lockBtn" title="Enable/Disable editing"><i class="bi bi-unlock-fill"></i></button>
+                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="toggleWordWrap(['inputText'])" title="Toggle Wordwrap"><i class="bi bi-text-wrap"></i></button>
+                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="clearMultiple(['koi_Draft_1'])" title="Clear fields"><i class="bi bi-trash3-fill"></i></button>
+                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="copyTextarea('inputText')" title="Copy output"><i class="bi bi-copy"></i></button>
                       </div>
                     </div>
                     <div class="input-group mb-2 flex-grow-1">
@@ -123,15 +124,18 @@
         const savedValue = localStorage.getItem('koi_Draft_1');
         if (savedValue) {
           textbox.value = savedValue;
-          updateCharCount(savedValue);  // Update character count when page loads
+          updateCharCount(savedValue, 'charCount'); // Update character count when page loads
         }
       
         // Save and update character count on input
         textbox.addEventListener('input', function() {
           const value = this.value;
           localStorage.setItem('koi_Draft_1', value);
-          updateCharCount(value);  // Update character count on input
+          updateCharCount(value, 'charCount'); // Update character count on input
         });
+
+        // Initialize lock if enabled
+        initLock(['inputText'], 'koi_draft1_lock');
       };
     </script>
 

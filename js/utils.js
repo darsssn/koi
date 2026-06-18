@@ -37,14 +37,57 @@
         });
       }
 
-      // Function to update character count display
-      function updateCharCount(text) {
+      // LOCK function - toggle + restore logic
+      function toggleLock(ids, lockKey) {
+        const isLocked = localStorage.getItem(lockKey) !== null;
+        const newLockedState = !isLocked;
+      
+        ids.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.readOnly = newLockedState;
+        });
+      
+        if (newLockedState) {
+          localStorage.setItem(lockKey, "1");
+        } else {
+          localStorage.removeItem(lockKey);
+        }
+      
+        updateLockIcon(newLockedState);
+      }
+      
+      // LOCK function - initializer
+      function initLock(ids, lockKey) {
+        const isLocked = localStorage.getItem(lockKey) !== null;
+      
+        ids.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.readOnly = isLocked;
+        });
+      
+        updateLockIcon(isLocked);
+      }
+      
+      // LOCK function - helper
+      function updateLockIcon(isLocked) {
+        const icon = document.querySelector("#lockBtn i");
+        if (!icon) return;
+      
+        icon.classList.toggle("bi-lock-fill", isLocked);
+        icon.classList.toggle("bi-unlock-fill", !isLocked);
+      }
+
+      function updateCharCount(text, targetId) {
         const charCount = text.length;
 
-        // Count rows (handles \n and \r\n properly)
-        const rowCount = text.length === 0 
-          ? 0 
+        const rowCount = text.length === 0
+          ? 0
           : text.split(/\r\n|\r|\n/).length;
 
-        document.getElementById('charCount').textContent = "length: " + charCount + ", lines: " + rowCount;
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.textContent = "length: " + charCount + ", lines: " + rowCount;
+        }
       }

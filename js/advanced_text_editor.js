@@ -126,16 +126,6 @@ function inputFieldnames() {
     outputModal.show();
 }
 
-// Output Modal Copy Button functionality
-function copyModalOutputText() {
-    const outputTextbox = document.getElementById('modalData-outputText');
-    outputTextbox.select();  // Select the contents of the textarea
-    document.execCommand('copy');  // Execute the copy command to copy the selected text
-    // js/toast.js
-    showToast("Text copied to clipboard!");
-    outputTextbox.blur();  // This will unselect the text by removing focus from the textarea
-}
-
 // Function to save output text to local storage
 function saveOutputTextToCache() {
     const outputText = document.getElementById('modalData-outputText').value;

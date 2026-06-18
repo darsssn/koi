@@ -78,10 +78,11 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Text Editor</label>
                       <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-outputText" onclick="loadOutputTextFromCache()" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Previous Output</button>
-                        <button type="button" class="btn btn-secondary" onclick="toggleWordWrap(['inputText'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Toggle WordWrap</button>
-                        <button type="button" class="btn btn-secondary" onclick="clearMultiple(['koi_textEditor_inputText', 'koi_textEditor_outputText'])" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Clear</button>
-                        <button type="button" class="btn btn-secondary" onclick="copyTextarea('inputText')" style="border: 1px solid #000; --bs-btn-padding-y: 0.25rem; --bs-btn-padding-x: 0.75rem; --bs-btn-font-size: 1rem;">Copy</button>
+                        <button type="button" class="btn btn-secondary btn-toolbar1" data-bs-toggle="modal" data-bs-target="#modal-outputText" onclick="loadOutputTextFromCache()">Previous Output</button>
+                        <button type="button" class="btn btn-secondary disabled separator-btn"></button>
+                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="toggleWordWrap(['inputText'])" title="Toggle Wordwrap"><i class="bi bi-text-wrap"></i></button>
+                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="clearMultiple(['koi_textEditor_inputText', 'koi_textEditor_outputText'])" title="Clear fields"><i class="bi bi-trash3-fill"></i></button>
+                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="copyTextarea('inputText')" title="Copy output"><i class="bi bi-copy"></i></button>
                       </div>
                     </div>
                     <div class="input-group mb-2 flex-grow-1">
@@ -133,12 +134,14 @@
 
         if (savedInputText) {
           textbox.value = savedInputText;
+          updateCharCount(savedInputText, 'charCountFloat'); // Update character count when page loads
         }
       
         // Save and update character count on input
         textbox.addEventListener('input', function() {
           const value = this.value;
           localStorage.setItem('koi_textEditor_inputText', value);
+          updateCharCount(value, 'charCountFloat'); // Update character count when page loads
         });
       };
     </script>
@@ -343,7 +346,10 @@
             <div class="card-body d-flex flex-column">
               <div class="mb-1">
                 <textarea id="modalData-outputText" class="form-control mb-2" style="height: 70vh;" readonly></textarea>
-                <button type="button" class="btn btn-secondary" onclick="copyModalOutputText()" id="copyModalBtn">Copy</button>
+                <div class="btn-group mb-2" role="group">
+                  <button type="button" class="btn btn-secondary" onclick="copyTextarea('modalData-outputText')" title="Copy output"><i class="bi bi-copy"></i></button>
+                  <button type="button" class="btn btn-secondary" onclick="toggleWordWrap(['modalData-outputText'])" title="Toggle Wordwrap"><i class="bi bi-text-wrap"></i></button>
+                </div>
               </div>
             </div>
           </div>
@@ -353,6 +359,8 @@
     <!-- /.modal-dialog -->
   </div>
   <!-- Output Modal -->
+
+<div id="charCountFloat" class="charcount-float">...</div>
 
 </html>
 
