@@ -30,9 +30,11 @@
           if (isNoWrap) {
             textarea.style.whiteSpace = "normal";
             textarea.setAttribute("wrap", "soft");
+            showToast("Word wrap enabled");
           } else {
             textarea.style.whiteSpace = "nowrap";
             textarea.setAttribute("wrap", "off");
+            showToast("Word wrap disabled");
           }
         });
       }
@@ -55,6 +57,12 @@
         }
       
         updateLockIcon(newLockedState);
+
+        showToast(
+          newLockedState
+            ? "LOCKED - Editing disabled"
+            : "UNLOCKED - Editing enabled"
+        );
       }
       
       // LOCK function - initializer
@@ -72,13 +80,21 @@
       
       // LOCK function - helper
       function updateLockIcon(isLocked) {
+        // Update lock icon
         const icon = document.querySelector("#lockBtn i");
-        if (!icon) return;
+        if (icon) {
+          icon.classList.toggle("bi-lock-fill", isLocked);
+          icon.classList.toggle("bi-unlock-fill", !isLocked);
+        }
       
-        icon.classList.toggle("bi-lock-fill", isLocked);
-        icon.classList.toggle("bi-unlock-fill", !isLocked);
+        // Update clear button
+        const clearBtn = document.getElementById("clearBtn");
+        if (clearBtn) {
+          clearBtn.disabled = isLocked;
+        }
       }
 
+      // Function for counting total characters & rows
       function updateCharCount(text, targetId) {
         const charCount = text.length;
 

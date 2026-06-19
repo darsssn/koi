@@ -3,7 +3,7 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Draft</title>
+    <title>Control Panel</title>
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
@@ -76,27 +76,28 @@
                   <!--begin::Body-->
                   <div class="card-body d-flex flex-column" style="height: 90vh;"> <!-- Adjust based on viewport height -->
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="form-label">Draft</label>
-                      <div class="btn-group mb-2" role="group">
-                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="toggleLock(['inputText'], 'koi_draft1_lock')" id="lockBtn" title="Enable/Disable editing"><i class="bi bi-unlock-fill"></i></button>
-                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="toggleWordWrap(['inputText'])" title="Toggle Wordwrap"><i class="bi bi-text-wrap"></i></button>
-                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="clearMultiple(['koi_Draft_1'])" id="clearBtn" title="Clear fields"><i class="bi bi-trash3-fill"></i></button>
-                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="copyTextarea('inputText')" title="Copy output"><i class="bi bi-copy"></i></button>
+                      <label class="form-label fs-4">Control Panel</label>
+                    </div>
+                    <div class="border rounded p-3 mb-3">
+                      <label class="form-label fs-5">Clear Cached Data</label>
+                      <div class="form-text fs-6 mb-2">
+                        Deletes cached localStorage entries starting with <code>koi_</code>.
+                        This action cannot be undone.
                       </div>
-                    </div>
-                    <div class="input-group mb-2 flex-grow-1">
-                      <textarea id="inputText" class="form-control" aria-label="With textarea"></textarea>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <nav aria-label="...">
-                        <ul class="pagination" style="margin-bottom: 0; padding-bottom: 0;">
-                          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                          <li class="page-item"><a class="page-link" href="draft_2.html">2</a></li>
-                          <li class="page-item"><a class="page-link" href="draft_3.html">3</a></li>
-                          <li class="page-item"><a class="page-link" href="draft_4.html">4</a></li>
-                        </ul>
-                      </nav>
-                      <!--<span class="input-group-text" id="charCount">...</span>-->
+                      <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-danger w-50" onclick="clearKoiLocks()">
+                          <i class="bi bi-lock-fill"></i>
+                          Clear locks
+                        </button>
+                        <button type="button" class="btn btn-warning w-50" onclick="clearKoiExceptOTP()">
+                          <i class="bi bi-shield-exclamation"></i>
+                          Clear all data (except OTP Generator Accounts)
+                        </button>
+                        <button type="button" class="btn btn-danger w-50" onclick="clearKoiStorage()">
+                          <i class="bi bi-trash3-fill"></i>
+                          Clear all data
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <!--end::Body-->
@@ -115,29 +116,76 @@
     </div>
     <!--end::App Wrapper-->
 
-    <!--Persistence-->
+    <!--Main Function-->
     <script>
-      // Load the saved value when the page is loaded
-      window.onload = function() {
-        localStorage.setItem("koi_last_draft", 1); // Save the current draft index
-        const textbox = document.getElementById('inputText');
-        const savedValue = localStorage.getItem('koi_Draft_1');
-        if (savedValue) {
-          textbox.value = savedValue;
-          updateCharCount(savedValue, 'charCountFloat'); // Update character count when page loads
+      function clearKoiStorage() {
+        if (!confirm("Delete all cached KOI data?")) {
+          return;
         }
-      
-        // Save and update character count on input
-        textbox.addEventListener('input', function() {
-          const value = this.value;
-          localStorage.setItem('koi_Draft_1', value);
-          updateCharCount(value, 'charCountFloat'); // Update character count on input
+
+        const keysToDelete = [];
+
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+
+          if (key && key.startsWith("koi_")) {
+            keysToDelete.push(key);
+          }
+        }
+
+        keysToDelete.forEach(key => {
+          localStorage.removeItem(key);
         });
 
-        // Initialize lock if enabled
-        initLock(['inputText'], 'koi_draft1_lock');
-      };
+        showToast(`Deleted ${keysToDelete.length} cached item(s).`);
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+      }
+
+      function clearKoiLocks() {
+        if (!confirm("Delete locks?")) {
+          return;
+        }
+
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+
+          if (key && key.startsWith("koi_") && key.includes("lock")) {
+            localStorage.removeItem(key);
+          }
+        }
+
+        showToast("Locks cleared");
+      }
+
+      function clearKoiExceptOTP() {
+        if (!confirm("Delete all cached KOI data except OTP accounts?")) {
+          return;
+        }
+        
+        const preserveKeys = [
+          "koi_otp_accounts"
+        ];
+
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+
+          if (key && key.startsWith("koi_") && !preserveKeys.includes(key)) {
+            localStorage.removeItem(key);
+          }
+        }
+
+        showToast("KOI data cleared (OTP preserved)");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+      }
     </script>
+    <!--Main Function-->
+
+    <!--Persistence-->
+    <!--Persistence-->
 
     <!--begin::Third Party / Custom Plugins-->
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
@@ -152,8 +200,6 @@
     <!--end::Third Party / Custom Plugins-->
   </body>
   <!--end::Body-->
-  
-  <div id="charCountFloat" class="charcount-float">...</div>
 
 </html>
 

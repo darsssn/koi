@@ -7,7 +7,7 @@ function renderSidebarStatic() {
   // Insert static brand + wrapper structure
   sidebar.innerHTML = `
     <div class="sidebar-brand">
-      <a href="draft.html" class="brand-link">
+      <a href="index.html" class="brand-link">
         <img src="assets/img/Koi_logo.png" class="brand-image opacity-75 shadow"/>
         <span class="brand-text fw-light">KOI</span>
       </a>
@@ -60,6 +60,13 @@ function renderNavbarStatic() {
           <!-- This is the dynamic container -->
           <div id="notifList"></div>
         </div>
+      </li>
+
+      <!-- Control Panel -->
+      <li class="nav-item">
+        <a class="nav-link" href="control_panel.html">
+          <i class="bi bi-gear-fill"></i>
+        </a>
       </li>
 
       <!-- Theme toggle -->

@@ -2,16 +2,15 @@
 (() => {
   "use strict";
 
-  const storedTheme = localStorage.getItem("theme");
+  const THEME_KEY = "koi_theme";
+  const storedTheme = localStorage.getItem(THEME_KEY);
 
   const getPreferredTheme = () => {
     if (storedTheme) {
       return storedTheme;
     }
 
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
+    return "dark";
   };
 
   const setTheme = function (theme) {
@@ -71,7 +70,7 @@
     for (const toggle of document.querySelectorAll("[data-bs-theme-value]")) {
       toggle.addEventListener("click", () => {
         const theme = toggle.getAttribute("data-bs-theme-value");
-        localStorage.setItem("theme", theme);
+        localStorage.setItem(THEME_KEY, theme);
         setTheme(theme);
         showActiveTheme(theme, true);
       });
