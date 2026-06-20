@@ -289,7 +289,7 @@
       // If we have valid data, save it to localStorage
       if (formattedData.length > 0) {
         const newAccounts = formattedData.map(acc => `${acc.tech}=${acc.account}=${acc.key}=${acc.user}`).join("\n");
-        localStorage.setItem("koi_otp_accounts", newAccounts);
+        localStorage.setItem(STORAGE_KEY, newAccounts);
     
         // Close the modal using Bootstrap's Modal instance
         const modal = bootstrap.Modal.getInstance(document.getElementById("modal-otp-accounts"));
@@ -313,7 +313,7 @@
     <script>
       // Load saved values for the textboxes
       window.onload = function () {
-          const savedOTPAccounts = localStorage.getItem('STORAGE_KEY');
+          const savedOTPAccounts = localStorage.getItem(STORAGE_KEY);
       
           if (savedOTPAccounts !== null) {
               document.getElementById('modalInputData').value = savedOTPAccounts;
