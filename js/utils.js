@@ -1,5 +1,8 @@
       // Clear Button functionality
       function clearMultiple(storageKeys = []) {
+        if (!confirm("Confirm to clear fields...")) {
+          return;
+        }
         // Remove all specified localStorage keys
         storageKeys.forEach(key => {
           localStorage.removeItem(key);

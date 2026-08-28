@@ -79,6 +79,8 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label">Draft</label>
                       <div class="btn-group mb-2" role="group">
+                        <button type="button" class="btn btn-secondary btn-toolbar1" onclick="window.location.href='draft_history.html'" title="Draft History"><i class="bi bi-clock-history"></i></button>
+                        <button type="button" class="btn btn-secondary disabled separator-btn"></button>
                         <button type="button" class="btn btn-secondary btn-toolbar1" onclick="toggleLock(['inputText'], 'koi_draft2_lock')" id="lockBtn" title="Enable/Disable editing"><i class="bi bi-unlock-fill"></i></button>
                         <button type="button" class="btn btn-secondary btn-toolbar1" onclick="toggleWordWrap(['inputText'])" title="Toggle Wordwrap"><i class="bi bi-text-wrap"></i></button>
                         <button type="button" class="btn btn-secondary btn-toolbar1" onclick="clearMultiple(['koi_Draft_2'])" id="clearBtn" title="Clear fields"><i class="bi bi-trash3-fill"></i></button>
@@ -138,6 +140,8 @@
         // Initialize lock if enabled
         initLock(['inputText'], 'koi_draft2_lock');
       };
+
+      const draftNumber = 2 // For draft_history.js;
     </script>
 
     <!--begin::Third Party / Custom Plugins-->
@@ -150,6 +154,7 @@
     <script src="js/sidebar_toggle.js"></script> <!-- Link to sidebar toggler -->
     <script src="js/toast.js"></script> <!-- Toast Notification -->
     <script src="js/utils.js"></script> <!-- Link to utility functions (e.g., copy, clear, word wrap) -->
+    <script src="js/draft_history.js"></script> <!-- Draft history -->
     <!--end::Third Party / Custom Plugins-->
   </body>
   <!--end::Body-->

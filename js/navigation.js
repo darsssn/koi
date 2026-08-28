@@ -2,7 +2,7 @@
 const NAVIGATION = {
   findings_tools: {
     sidebar: { text: "Findings Tools", href: "draft.html", icon: "bi-tools" },
-    pages: ["draft.html", "draft_1.html", "draft_2.html", "draft_3.html", "draft_4.html", "kql.html", "merger.html", "sanitizer.html", "extractor.html", "splunk_parser.html", "text_editor.html"],
+    pages: ["draft.html", "draft_1.html", "draft_2.html", "draft_3.html", "draft_4.html", "draft_history.html", "kql.html", "merger.html", "sanitizer.html", "extractor.html", "splunk_parser.html", "text_editor.html"],
     navbar: [
       { text: "Draft", href: "draft.html" },
       { text: "KQL", href: "kql.html" },
